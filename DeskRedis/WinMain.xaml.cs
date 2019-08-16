@@ -137,7 +137,7 @@ namespace DeskRedis
                 item.ContextMenu?.Items.Clear();
                 item.FontWeight = FontWeights.Normal;
                 item.Foreground = new SolidColorBrush(Colors.Orange);
-                item.ContextMenu = this.CreateKeyContextMenu(itemNodeInfo);
+                item.ContextMenu = this.CreateKeyFolderContextMenu(itemNodeInfo);
 
                 if (info.Keys != null && info.Keys.Count > 0)
                 {
@@ -238,6 +238,24 @@ namespace DeskRedis
             itemDelete.Header = "清空";
             itemDelete.Click += MenuItem_DB_Click;
             menu.Items.Add(itemDelete);
+
+            return menu;
+        }
+
+        /// <summary>
+        /// 创建键文件夹的右键菜单。
+        /// </summary>
+        /// <param name="nodeInfo"></param>
+        /// <returns></returns>
+        private ContextMenu CreateKeyFolderContextMenu(NodeInfo nodeInfo)
+        {
+            System.Windows.Controls.ContextMenu menu = new ContextMenu();
+            MenuItem itemOpen = new MenuItem();
+            itemOpen.Name = "MenuItem_Key_Folder_Delete_" + nodeInfo.ConfigId;
+            itemOpen.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.DELETE };
+            itemOpen.Header = "删除";
+            itemOpen.Click += MenuItem_KeyFolder_Click;
+            menu.Items.Add(itemOpen);
 
             return menu;
         }
@@ -525,16 +543,34 @@ namespace DeskRedis
         /// <param name="e"></param>
         private void MenuItem_KeyFolder_Click(object sender, RoutedEventArgs e)
         {
-            MenuItem item = sender as MenuItem;
-            NodeInfo nodeInfo = item.Tag as NodeInfo;
+            MenuItem menuItem = sender as MenuItem;
+            NodeInfo nodeInfo = menuItem.Tag as NodeInfo;
 
-            if (MessageBox.Show($"确定要删除 {nodeInfo.Key} 下所有的键吗？", "删除提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            try
             {
-                if (GlobalBusiness.RedisCaches[nodeInfo.ConfigId].Remove(nodeInfo.Key + ":*", nodeInfo.DbIndex))
+                if (MessageBox.Show($"确定要删除 {nodeInfo.Key} 下所有的键吗？", "删除提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
+                    this.SetLog(this.tbLog, $"正在批量删除 {nodeInfo.Key} 下所有的键...");
+                    //删除下级所有的键
+                    IList<string> keys = new List<string>();
+                    foreach (TreeViewItem item in this.currentSelectedTreeViewItem.Items)
+                    {
+                        NodeInfo tmp = item.Tag as NodeInfo;
+                        keys.Add(tmp.Key);
+                    }
+
+                    GlobalBusiness.RedisCaches[nodeInfo.ConfigId].RemoveAll(keys, nodeInfo.DbIndex);
                     TreeViewItem parent = this.currentSelectedTreeViewItem.Parent as TreeViewItem;
                     parent.Items.Remove(this.currentSelectedTreeViewItem);
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                this.SetLog(this.tbLog, $"完成批量删除 {nodeInfo.Key} 下所有的键。");
             }
         }
 
