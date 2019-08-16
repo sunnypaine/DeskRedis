@@ -1,2 +1,10 @@
 # DeskRedis
-Redis客户端桌面管理工具
+Redis客户端桌面管理工具   
+   
+Redis Desktop Manager，的确好用，然而开始收费了。   
+Redis Client，老掉线断线，算了。   
+Redis Studio，讲真不是很好用。   
+   
+   
+所以，模仿Redis Desktop Manager的外观做了一个WPF基本版本的。
+下一个版本对外观进行美颜化妆。
