@@ -7,4 +7,6 @@ Redis Studio，讲真不是很好用。
    
    
 所以，模仿Redis Desktop Manager的外观做了一个WPF基本版本的。
-下一个版本对外观进行美颜化妆。
+下一个版本对外观进行美颜化妆。   
+   
+如果你想直接使用完整的软件，可以在Download文件夹下下载DeskRedis.zip包。使用软件但需要安装.NET哦！
