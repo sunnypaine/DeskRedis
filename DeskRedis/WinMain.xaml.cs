@@ -129,32 +129,47 @@ namespace DeskRedis
 
             foreach (KeyInfo info in keyInfos)
             {
-                TreeViewItem item = new TreeViewItem();
-                NodeInfo itemNodeInfo = new NodeInfo() { ConfigId = nodeInfo.ConfigId, Header = info.Header, DbIndex = nodeInfo.DbIndex, Key = info.Header };
-                item.Header = info.Header;
-                item.Tag = itemNodeInfo;
-                item.Margin = new Thickness(0, 2, 0, 2);
-                item.ContextMenu?.Items.Clear();
-                item.FontWeight = FontWeights.Normal;
-                item.Foreground = new SolidColorBrush(Colors.Orange);
-                item.ContextMenu = this.CreateKeyFolderContextMenu(itemNodeInfo);
-
-                if (info.Keys != null && info.Keys.Count > 0)
+                if (info.IsKey)
                 {
-                    foreach (KeyInfo key in info.Keys)
-                    {
-                        TreeViewItem keyItem = new TreeViewItem();
-                        NodeInfo keyNodeInfo = new NodeInfo() { ConfigId = nodeInfo.ConfigId, Header = key.Header, DbIndex = nodeInfo.DbIndex, Key = key.Key };
-                        keyItem.Header = key.Header;
-                        keyItem.Tag = keyNodeInfo;
-                        keyItem.Margin = new Thickness(0, 2, 0, 2);
-                        keyItem.FontWeight = FontWeights.Normal;
-                        keyItem.ContextMenu = this.CreateKeyContextMenu(keyNodeInfo);
-                        keyItem.MouseLeftButtonUp += KeyItem_MouseLeftButtonUp;
-                        item.Items.Add(keyItem);
-                    }
+                    TreeViewItem keyItem = new TreeViewItem();
+                    NodeInfo keyNodeInfo = new NodeInfo() { ConfigId = nodeInfo.ConfigId, Header = info.Header, DbIndex = nodeInfo.DbIndex, Key = info.Key };
+                    keyItem.Header = info.Header;
+                    keyItem.Tag = keyNodeInfo;
+                    keyItem.Margin = new Thickness(0, 2, 0, 2);
+                    keyItem.FontWeight = FontWeights.Normal;
+                    keyItem.ContextMenu = this.CreateKeyContextMenu(keyNodeInfo);
+                    keyItem.MouseLeftButtonUp += KeyItem_MouseLeftButtonUp;
+                    parent.Items.Add(keyItem);
                 }
-                parent.Items.Add(item);
+                else
+                {
+                    TreeViewItem item = new TreeViewItem();
+                    NodeInfo itemNodeInfo = new NodeInfo() { ConfigId = nodeInfo.ConfigId, Header = info.Header, DbIndex = nodeInfo.DbIndex, Key = info.Header };
+                    item.Header = info.Header;
+                    item.Tag = itemNodeInfo;
+                    item.Margin = new Thickness(0, 2, 0, 2);
+                    item.ContextMenu?.Items.Clear();
+                    item.FontWeight = FontWeights.Normal;
+                    item.Foreground = new SolidColorBrush(Colors.Orange);
+                    item.ContextMenu = this.CreateKeyFolderContextMenu(itemNodeInfo);
+
+                    if (info.Keys != null && info.Keys.Count > 0)
+                    {
+                        foreach (KeyInfo key in info.Keys)
+                        {
+                            TreeViewItem keyItem = new TreeViewItem();
+                            NodeInfo keyNodeInfo = new NodeInfo() { ConfigId = nodeInfo.ConfigId, Header = key.Header, DbIndex = nodeInfo.DbIndex, Key = key.Key };
+                            keyItem.Header = key.Header;
+                            keyItem.Tag = keyNodeInfo;
+                            keyItem.Margin = new Thickness(0, 2, 0, 2);
+                            keyItem.FontWeight = FontWeights.Normal;
+                            keyItem.ContextMenu = this.CreateKeyContextMenu(keyNodeInfo);
+                            keyItem.MouseLeftButtonUp += KeyItem_MouseLeftButtonUp;
+                            item.Items.Add(keyItem);
+                        }
+                    }
+                    parent.Items.Add(item);
+                }
             }
         }
 
@@ -307,6 +322,10 @@ namespace DeskRedis
                         info.Keys.Add(new KeyInfo() { IsKey = true, Key = key, Header = key });
                     }
                 }
+                else
+                {
+                    keyInfos.Add(new KeyInfo() { IsKey = true, Key = key, Header = key });
+                }
             }
             return keyInfos;
         }
@@ -352,17 +371,29 @@ namespace DeskRedis
         {
             Task.Run(() =>
             {
-                this.SetLog(this.tbLog, $"正在读取 {nodeInfo.Key} 的值...");
-                this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Visible; });
-                RedisValue redisValue = GlobalBusiness.RedisCaches[nodeInfo.ConfigId].Get(nodeInfo.Key, nodeInfo.DbIndex);
-                this.Dispatcher.Invoke(() =>
+                try
                 {
-                    this.tbKey.Text = nodeInfo.Key;
-                    this.tblockTTL.Text = redisValue.TTL.ToString();
-                    this.tbValue.Text = redisValue.Value;
-                });
-                this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Collapsed; });
-                this.SetLog(this.tbLog, $"完成读取 {nodeInfo.Key} 的值。");
+                    this.SetLog(this.tbLog, $"正在读取 {nodeInfo.Key} 的值...");
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        this.tbValue.Clear();
+                        this.gridLoading.Visibility = Visibility.Visible;
+                        this.tbKey.Text = nodeInfo.Key;
+                    });
+                    RedisValue redisValue = GlobalBusiness.RedisCaches[nodeInfo.ConfigId].Get(nodeInfo.Key, nodeInfo.DbIndex);
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        this.tblockTTL.Text = redisValue.TTL.ToString();
+                        this.tbValue.Text = redisValue.Value;
+                    });
+                    this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Collapsed; });
+                    this.SetLog(this.tbLog, $"完成读取 {nodeInfo.Key} 的值。");
+                }
+                catch (Exception e)
+                {
+                    this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Collapsed; });
+                    this.SetLog(this.tbLog, $"完成读取 {nodeInfo.Key} 的值。（附加信息：{nodeInfo.Key} 的值不是合法的。{e.Message}）");
+                }
             });
         }
         #endregion
