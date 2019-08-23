@@ -15,4 +15,7 @@ Redis Studio，讲真不是很好用。
 ### 更新日志
 [1.0.1908.1802]   
 - 修复不包含冒号的键无法显示在列表中的问题。
-- 修复当redis中存在WRONGTYPE Operation against a key holding the wrong kind of value错误键时导致程序崩溃的问题。
+- 修复当redis中存在WRONGTYPE Operation against a key holding the wrong kind of value错误键时导致程序崩溃的问题。   
+[1.0.1908.1551]    
+- 修复当redis连接失败时，日志栏中仍然显示连接成功的问题。
+- 增加连接信息修改功能。

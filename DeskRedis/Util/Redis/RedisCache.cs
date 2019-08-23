@@ -2,9 +2,6 @@
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeskRedis.Util.Redis
 {
@@ -33,6 +30,8 @@ namespace DeskRedis.Util.Redis
             IRedisClient client = null;
             try
             {
+                base.pooledRedisClientManager.ConnectTimeout = 10;
+                base.pooledRedisClientManager.PoolTimeout = 10;
                 client = base.pooledRedisClientManager.GetClient();
             }
             catch (Exception e)

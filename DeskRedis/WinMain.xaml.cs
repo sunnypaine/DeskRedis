@@ -108,12 +108,13 @@ namespace DeskRedis
                             parent.Items.Add(item);
                         });
                     }
+                    this.SetLog(this.tbLog, $"成功打开连接 {config.Name}({config.IP}:{config.Port})。");
                 }
                 else
                 {
                     MessageBox.Show(result);
+                    this.SetLog(this.tbLog, $"打开连接 {config.Name}({config.IP}:{config.Port})失败。");
                 }
-                this.SetLog(this.tbLog, $"成功打开连接 {config.Name}({config.IP}:{config.Port})。");
                 this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Collapsed; });
             });
         }
@@ -195,15 +196,15 @@ namespace DeskRedis
             itemRefresh.Click += MenuItem_Root_Click;
             menu.Items.Add(itemRefresh);
 
-            MenuItem itemClose = new MenuItem();
-            itemClose.Name = "MenuItem_Root_Close_" + nodeInfo.ConfigId;
-            itemClose.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.CLOSE };
-            itemClose.Header = "关闭";
-            itemClose.Click += MenuItem_Root_Click;
-            menu.Items.Add(itemClose);
+            Separator separator1 = new Separator();
+            menu.Items.Add(separator1);
 
-            Separator separator = new Separator();
-            menu.Items.Add(separator);
+            MenuItem itemEdit = new MenuItem();
+            itemEdit.Name = "MenuItem_Root_Edit_" + nodeInfo.ConfigId;
+            itemEdit.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.EDIT };
+            itemEdit.Header = "编辑";
+            itemEdit.Click += MenuItem_Root_Click;
+            menu.Items.Add(itemEdit);
 
             MenuItem itemDelete = new MenuItem();
             itemDelete.Name = "MenuItem_Root_Delete_" + nodeInfo.ConfigId;
@@ -211,6 +212,16 @@ namespace DeskRedis
             itemDelete.Header = "删除";
             itemDelete.Click += MenuItem_Root_Click;
             menu.Items.Add(itemDelete);
+
+            Separator separator2 = new Separator();
+            menu.Items.Add(separator2);
+
+            MenuItem itemClose = new MenuItem();
+            itemClose.Name = "MenuItem_Root_Close_" + nodeInfo.ConfigId;
+            itemClose.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.CLOSE };
+            itemClose.Header = "关闭";
+            itemClose.Click += MenuItem_Root_Click;
+            menu.Items.Add(itemClose);
 
             return menu;
         }
@@ -404,10 +415,19 @@ namespace DeskRedis
         /// 当连接信息保存完毕时发生。
         /// </summary>
         /// <param name="config"></param>
-        private void WinAddConnection_SavedConnectionConfig(ConnectionConfig config)
+        private void WinAddConnection_SavedConnectionConfig(ConnectionConfig config, ConfigOperationType crudType)
         {
-            TreeView tree = this.CreateRootNode(config);
-            this.gridRedisList.Children.Add(tree);
+            if (crudType == ConfigOperationType.ADD)
+            {
+                TreeView tree = this.CreateRootNode(config);
+                this.gridRedisList.Children.Add(tree);
+            }
+            else if (crudType == ConfigOperationType.EDIT)
+            {
+                this.currentSelectedTreeViewItem.Items.Clear();
+                this.currentSelectedTreeViewItem.Tag = config;
+                this.currentSelectedTreeViewItem.Header = config.Name;
+            }
         }
 
         /// <summary>
@@ -487,10 +507,16 @@ namespace DeskRedis
 
                 return;
             }
-            if (MenuItemType.CLOSE.Equals(nodeInfo.Type))
+            if (MenuItemType.EDIT.Equals(nodeInfo.Type))
             {
-                this.currentSelectedTreeViewItem.Items.Clear();
-                this.currentSelectedTreeViewItem.IsExpanded = false;
+                if (MessageBox.Show("该操作将关闭连接！是否继续？", "操作提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    this.currentSelectedTreeViewItem.Items.Clear();
+                    WinAddConnection winAddConnection = new WinAddConnection(nodeInfo.ConfigId, ConfigOperationType.EDIT);
+                    winAddConnection.SavedConnectionConfig += this.WinAddConnection_SavedConnectionConfig;
+                    winAddConnection.ShowDialog();
+                    winAddConnection.SavedConnectionConfig -= this.WinAddConnection_SavedConnectionConfig;
+                }
 
                 return;
             }
@@ -503,6 +529,13 @@ namespace DeskRedis
                     this.gridRedisList.Children.Remove(tree);
                     GlobalBusiness.RemoveConfig(config.Id);
                 }
+
+                return;
+            }
+            if (MenuItemType.CLOSE.Equals(nodeInfo.Type))
+            {
+                this.currentSelectedTreeViewItem.Items.Clear();
+                this.currentSelectedTreeViewItem.IsExpanded = false;
 
                 return;
             }
@@ -696,7 +729,7 @@ namespace DeskRedis
         /// <param name="e"></param>
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
-            WinAddConnection winAddConnection = new WinAddConnection();
+            WinAddConnection winAddConnection = new WinAddConnection(ConfigOperationType.ADD);
             winAddConnection.SavedConnectionConfig += this.WinAddConnection_SavedConnectionConfig;
             winAddConnection.ShowDialog();
             winAddConnection.SavedConnectionConfig -= this.WinAddConnection_SavedConnectionConfig;

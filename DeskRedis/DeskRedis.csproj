@@ -111,6 +111,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Enums\ConfigOperationType.cs" />
     <Compile Include="Enums\MenuItemType.cs" />
     <Compile Include="Exceptions\DuplicateMemberException.cs" />
     <Compile Include="Exceptions\IllegalFormDataException.cs" />

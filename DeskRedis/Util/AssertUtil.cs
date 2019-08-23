@@ -27,7 +27,7 @@ namespace DeskRedis.Util
                 {
                     throw new ArgumentNullException(string.Format(tip, obj.ToString()));
                 }
-                if(item is String)
+                if (item is String && string.IsNullOrEmpty(item.ToString()))
                 {
                     throw new StringArgumentEmptyException(string.Format(tip, obj.ToString()));
                 }

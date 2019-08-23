@@ -1,6 +1,9 @@
-﻿using DeskRedis.Exceptions;
+﻿using DeskRedis.Enums;
+using DeskRedis.Exceptions;
 using DeskRedis.Model.Configs;
+using DeskRedis.Util.Redis;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,32 +14,42 @@ namespace DeskRedis
     /// </summary>
     public partial class WinAddConnection : Window
     {
-        public Action<ConnectionConfig> SavedConnectionConfig;
+        private ConfigOperationType configOperationType;
+        private string configId;
+
+
+        public delegate void OnSaveConnectionConfigHandler(ConnectionConfig config, ConfigOperationType configOperationType);
+        /// <summary>
+        /// 当保存配置信息成功时发生。
+        /// </summary>
+        public event OnSaveConnectionConfigHandler SavedConnectionConfig;
+
 
         /// <summary>
         /// 使用默认参数创建实例。
         /// </summary>
-        public WinAddConnection() : this(null)
+        public WinAddConnection(ConfigOperationType crudType) : this(null, crudType)
         { }
 
         /// <summary>
         /// 使用指定的参数创建实例。
         /// </summary>
-        /// <param name="connName">连接名称。</param>
-        public WinAddConnection(string connName)
+        /// <param name="connId">连接名称。</param>
+        public WinAddConnection(string connId, ConfigOperationType configOperationType)
         {
             InitializeComponent();
 
-            if (!string.IsNullOrWhiteSpace(connName))
+            this.configOperationType = configOperationType;
+            if (!string.IsNullOrWhiteSpace(connId))
             {
-                ConnectionConfig config = GlobalBusiness.GetConnectionConfig(connName);
+                this.configId = connId;
+                ConnectionConfig config = GlobalBusiness.GetConnectionConfig(connId);
                 this.tbConnIP.Text = config.IP;
                 this.tbConnPort.Text = config.Port.ToString();
                 this.tbConnName.Text = config.Name;
                 this.tbConnPassword.Text = config.Password;
             }
         }
-
 
         /// <summary>
         /// 当鼠标点击保存按钮时发生。
@@ -60,21 +73,27 @@ namespace DeskRedis
                     throw new IllegalFormDataException("端口不能为空。");
                 }
 
-
                 ConnectionConfig config = new ConnectionConfig()
                 {
-                    Id = Guid.NewGuid().ToString("N"),
                     Name = this.tbConnName.Text.Trim(),
                     IP = this.tbConnIP.Text.Trim(),
                     Port = Convert.ToInt32(this.tbConnPort.Text.Trim()),
                     Password = this.tbConnPassword.Text.Trim()
                 };
-
-                GlobalBusiness.SaveConfig(config);
+                if (configOperationType == ConfigOperationType.ADD)
+                {
+                    config.Id = Guid.NewGuid().ToString("N");
+                    GlobalBusiness.SaveConfig(config);
+                }
+                else
+                {
+                    config.Id = this.configId;
+                    GlobalBusiness.UpdateConfig(config);
+                }
 
                 MessageBox.Show("保存成功！");
 
-                this.SavedConnectionConfig?.Invoke(config);
+                this.SavedConnectionConfig?.Invoke(config, this.configOperationType);
 
                 this.Close();
             }
@@ -83,6 +102,10 @@ namespace DeskRedis
                 MessageBox.Show(ex.Message);
             }
             catch (DuplicateMemberException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
             {
                 MessageBox.Show(ex.Message);
             }
@@ -113,6 +136,11 @@ namespace DeskRedis
             }
         }
 
+        /// <summary>
+        /// 当密码框内容变化时发生。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PwdConnPassword_PasswordChanged(object sender, RoutedEventArgs e)
         {
             if (this.pwdConnPassword.IsVisible)
@@ -121,11 +149,66 @@ namespace DeskRedis
             }
         }
 
+        /// <summary>
+        /// 当密码框（明文）内容变化时发生。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void TbConnPassword_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (this.tbConnPassword.IsVisible)
             {
                 this.pwdConnPassword.Password = this.tbConnPassword.Text.Trim();
+            }
+        }
+
+        /// <summary>
+        /// 当鼠标点击测试连接按钮时发生。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnTestConnect_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(this.tbConnName.Text))
+                {
+                    throw new IllegalFormDataException("名称不能为空。");
+                }
+                if (string.IsNullOrWhiteSpace(this.tbConnIP.Text))
+                {
+                    throw new IllegalFormDataException("地址不能为空。");
+                }
+                if (string.IsNullOrWhiteSpace(this.tbConnPort.Text))
+                {
+                    throw new IllegalFormDataException("端口不能为空。");
+                }
+
+
+                ConnectionConfig config = new ConnectionConfig()
+                {
+                    Name = this.tbConnName.Text.Trim(),
+                    IP = this.tbConnIP.Text.Trim(),
+                    Port = Convert.ToInt32(this.tbConnPort.Text.Trim()),
+                    Password = this.tbConnPassword.Text.Trim()
+                };
+
+                string host = (string.IsNullOrEmpty(config.Password) ? "" : $"{config.Password}@") + $"{config.IP}:{config.Port}";
+                string[] hosts = new string[] { host };
+                IRedisCache redis = new RedisCache(hosts, hosts);
+                string result = redis.ConnectTest();
+                if ("SUCCESS".Equals(result))
+                {
+                    MessageBox.Show("连接成功！");
+                }
+                else
+                {
+                    MessageBox.Show($"连接失败！（{result}）");
+                }
+            }
+            catch (IllegalFormDataException ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }
