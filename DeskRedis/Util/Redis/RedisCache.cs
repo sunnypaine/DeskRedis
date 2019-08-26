@@ -36,7 +36,7 @@ namespace DeskRedis.Util.Redis
             }
             catch (Exception e)
             {
-                return e.InnerException.Message;
+                return e.InnerException?.Message;
             }
             finally
             {
