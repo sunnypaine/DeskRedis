@@ -32,20 +32,23 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="280" MinWidth="280" MaxWidth="400"/>
-                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="300" MinWidth="280" MaxWidth="400"/>
+                <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <!--redis服务端列表-->
-            <StackPanel x:Name="gridRedisList"
-                        Grid.Column="0"
-                        Orientation="Vertical"
-                        VerticalAlignment="Top">
-            </StackPanel>
+            <ScrollViewer BorderBrush="Gray">
+                <StackPanel x:Name="gridRedisList"
+                            Grid.Column="0"
+                            Orientation="Vertical"
+                            VerticalAlignment="Top">
+                </StackPanel>
+            </ScrollViewer>
 
             <!--分割线-->
             <GridSplitter Grid.Column="1"
-                          Width="10"
+                          Width="6"
+                          Margin="2 0 2 0"
                           HorizontalAlignment="Center"
                           VerticalAlignment="Stretch"
                           Background="#E5E5E5"/>
