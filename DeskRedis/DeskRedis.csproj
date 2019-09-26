@@ -132,6 +132,9 @@
     <Compile Include="WinRenameKey.xaml.cs">
       <DependentUpon>WinRenameKey.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WinSearchKey.xaml.cs">
+      <DependentUpon>WinSearchKey.xaml</DependentUpon>
+    </Compile>
     <Page Include="Style\Color.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -157,6 +160,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WinRenameKey.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinSearchKey.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

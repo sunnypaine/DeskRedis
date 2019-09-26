@@ -68,7 +68,10 @@
                                VerticalAlignment="Center"/>
                     <TextBox x:Name="tbKey" 
                              Width="280"
+                             Height="26"
                              IsReadOnly="True"
+                             VerticalAlignment="Center"
+                             Padding="3 4"
                              VerticalContentAlignment="Center"/>
 
                     <TextBlock Text="TTL:"

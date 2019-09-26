@@ -248,6 +248,16 @@ namespace DeskRedis
             itemRefresh.Click += MenuItem_DB_Click;
             menu.Items.Add(itemRefresh);
 
+            MenuItem itemSearch = new MenuItem();
+            itemSearch.Name = "MenuItem_DB_Search_" + nodeInfo.ConfigId + "_" + nodeInfo.DbIndex;
+            itemSearch.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.SEARCH };
+            itemSearch.Header = "搜索";
+            itemSearch.Click += MenuItem_DB_Click;
+            menu.Items.Add(itemSearch);
+
+            Separator separator = new Separator();
+            menu.Items.Add(separator);
+
             MenuItem itemClose = new MenuItem();
             itemClose.Name = "MenuItem_DB_Close_" + nodeInfo.ConfigId + "_" + nodeInfo.DbIndex;
             itemClose.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.CLOSE };
@@ -255,7 +265,7 @@ namespace DeskRedis
             itemClose.Click += MenuItem_DB_Click;
             menu.Items.Add(itemClose);
 
-            Separator separator = new Separator();
+            separator = new Separator();
             menu.Items.Add(separator);
 
             MenuItem itemDelete = new MenuItem();
@@ -441,6 +451,15 @@ namespace DeskRedis
             nodeInfo.Header = newKey;
             nodeInfo.Key = newKey;
         }
+
+        /// <summary>
+        /// 当其它窗口业务出现错误是发生。
+        /// </summary>
+        /// <param name="message"></param>
+        private void Win_OnError(string message)
+        {
+            this.SetLog(this.tbLog, message);
+        }
         #endregion
 
 
@@ -584,6 +603,13 @@ namespace DeskRedis
                 this.CreateKeyNode(this.currentSelectedTreeViewItem, keys);
                 this.currentSelectedTreeViewItem.IsExpanded = true;
                 this.gridLoading.Visibility = Visibility.Collapsed;
+            }
+            if (MenuItemType.SEARCH.Equals(nodeInfo.Type))
+            {
+                WinSearchKey winSearchKey = new WinSearchKey(nodeInfo.ConfigId, nodeInfo.DbIndex);
+                winSearchKey.OnError += this.Win_OnError;
+                winSearchKey.ShowDialog();
+                winSearchKey.OnError -= this.Win_OnError;
             }
             if (MenuItemType.CLOSE.Equals(nodeInfo.Type))
             {

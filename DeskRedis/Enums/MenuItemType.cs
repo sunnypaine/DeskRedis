@@ -6,6 +6,7 @@
         DELETE,
         EDIT,
         REFRESH,
+        SEARCH,
         CLOSE,
         FLUSH
     }
