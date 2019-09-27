@@ -6,7 +6,10 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Style/BaseControlStyle.xaml"/>
+                <ResourceDictionary Source="Style/TextBoxStyle.xaml"/>
                 <ResourceDictionary Source="Style/Color.xaml"/>
+                <ResourceDictionary Source="Style/PathData.xaml"/>
                 <ResourceDictionary Source="Style/ScrollStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

@@ -4,33 +4,101 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DeskRedis"
+        xmlns:cc="clr-namespace:DeskRedis.Control.CustomControl"
         mc:Ignorable="d"
-        Title="RedisClient" Height="800" Width="1300" WindowStartupLocation="CenterScreen" Icon="redis.ico">
+        Title="RedisClient" Height="800" Width="1300" MinHeight="600" MinWidth="1000"
+        WindowStyle="None" AllowsTransparency="True" WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <!--基础操作-->
-        <StackPanel Grid.Row="0"
-                    Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Left">
-            <Button x:Name="btnAdd"
-                    Width="50"
-                    Height="23"
-                    Content="添加"
-                    Margin="5 0 0 0"
-                    Click="BtnAdd_Click"/>
-            <Button x:Name="btnReload"
-                    Width="50"
-                    Height="23"
-                    Content="刷新"
-                    Margin="10 0 0 0"
-                    Click="BtnReload_Click"/>
-        </StackPanel>
+        <Border BorderThickness="1"
+                BorderBrush="#6495ED"
+                Grid.RowSpan="3"/>
+        <UniformGrid Grid.Row="0"
+                     x:Name="gridTitle"
+                     Background="#6495ED"
+                     Rows="1" Columns="2"
+                     MouseLeftButtonDown="GridTitle_MouseLeftButtonDown">
+            <StackPanel Grid.Column="0"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left">
+                <Image Source="Images/redis.ico"
+                       Width="20"
+                       Margin="5 0 0 0"/>
+                <TextBlock Text="RedisClient"
+                           Grid.Row="0"
+                           Margin="10 0 0 0"
+                           Foreground="#FFFFFF"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"/>
+            </StackPanel>
 
-        <Grid Grid.Row="1">
+            <StackPanel Grid.Column="1"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right">
+                <cc:ImageButton x:Name="btnMin"
+                                Width="28"
+                                Height="28"
+                                Background="#6495ED"
+                                MouseHoverColor="#CCB9D3EE"
+                                MouseClickColor="#B9D3EE"
+                                CornerRadius="0"
+                                ImageHeight="2"
+                                PathData="{StaticResource ResourceKey=Min}"
+                                Click="BtnMin_Click"/>
+                <cc:ImageButton x:Name="btnMax"
+                                Width="28"
+                                Height="28"
+                                Background="#6495ED"
+                                MouseHoverColor="#CCB9D3EE"
+                                MouseClickColor="#B9D3EE"
+                                CornerRadius="0"
+                                PathData="{StaticResource ResourceKey=Max}"/>
+                <cc:ImageButton x:Name="btnExit"
+                                Width="28"
+                                Height="28"
+                                Margin="0 0 1 0"
+                                Background="#FF0000"
+                                MouseHoverColor="#CCFF0000"
+                                MouseClickColor="#FF0000"
+                                CornerRadius="0"
+                                PathData="{StaticResource ResourceKey=Close}"
+                                Click="BtnExit_Click"/>
+            </StackPanel>
+        </UniformGrid>
+
+        <!--基础操作-->
+        <Border Grid.Row="1"
+                BorderThickness="0 0 0 1"
+                BorderBrush="#EBEBEB">
+            <StackPanel Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left">
+                <cc:PathButton x:Name="btnAdd"
+                               Width="50"
+                               Height="23"
+                               Content="添加"
+                               Margin="5 0 0 0"
+                               CornerRadius="0"
+                               PathData="{StaticResource ResourceKey=Add}"
+                               Click="BtnAdd_Click"/>
+                <cc:PathButton x:Name="btnReload"
+                               Width="50"
+                               Height="23"
+                               Content="刷新"
+                               Margin="10 0 0 0"
+                               CornerRadius="0"
+                               PathData="{StaticResource ResourceKey=Refresh}"
+                               Click="BtnReload_Click"/>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="300" MinWidth="280" MaxWidth="400"/>
                 <ColumnDefinition Width="10"/>
@@ -58,6 +126,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="36"/>
                     <RowDefinition Height="5*"/>
+                    <RowDefinition Height="30"/>
                     <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0"
@@ -81,24 +150,30 @@
                                Text="0"
                                Margin="5 0 0 0"
                                VerticalAlignment="Center"/>
-                    <Button x:Name="btnRenameKey"
-                            Content="重命名键"
-                            Width="60"
-                            Height="26"
-                            Margin="10 0 0 0"
-                            Click="BtnRenameKey_Click"/>
-                    <Button x:Name="btnDeleteKey"
-                            Content="删除键"
-                            Width="60"
-                            Height="26"
-                            Margin="10 0 0 0"
-                            Click="BtnDeleteKey_Click"/>
-                    <Button x:Name="btnRefresh"
-                            Content="刷新"
-                            Width="60"
-                            Height="26"
-                            Margin="10 0 0 0"
-                            Click="BtnRefresh_Click"/>
+                    <cc:PathButton x:Name="btnRenameKey"
+                                   Content="重命名键"
+                                   Width="90"
+                                   Height="26"
+                                   Margin="10 0 0 0"
+                                   CornerRadius="0"
+                                   PathData="{StaticResource ResourceKey=Edit}"
+                                   Click="BtnRenameKey_Click"/>
+                    <cc:PathButton x:Name="btnDeleteKey"
+                                   Content="删除键"
+                                   Width="90"
+                                   Height="26"
+                                   Margin="10 0 0 0"
+                                   CornerRadius="0"
+                                   PathData="{StaticResource ResourceKey=Delete}"
+                                   Click="BtnDeleteKey_Click"/>
+                    <cc:PathButton x:Name="btnRefresh"
+                                   Content="刷新"
+                                   Width="60"
+                                   Height="26"
+                                   Margin="10 0 0 0"
+                                   CornerRadius="0"
+                                   PathData="{StaticResource ResourceKey=Refresh}"
+                                   Click="BtnRefresh_Click"/>
                 </StackPanel>
 
                 <TextBox x:Name="tbValue" 
@@ -106,8 +181,13 @@
                          TextWrapping="Wrap"
                          VerticalScrollBarVisibility="Auto"/>
 
+                <TextBlock Text="日志信息"
+                           Grid.Row="2"
+                           Margin="0 0 0 5"
+                           VerticalAlignment="Bottom"/>
+
                 <TextBox x:Name="tbLog"
-                         Grid.Row="2"
+                         Grid.Row="3"
                          TextWrapping="Wrap"
                          VerticalScrollBarVisibility="Auto"
                          TextChanged="TbLog_TextChanged"/>

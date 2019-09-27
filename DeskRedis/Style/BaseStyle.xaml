@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:DeskRedis.Style">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Style/Color.xaml"/>
+        <ResourceDictionary Source="/Style/Font.xaml"/>
+        <ResourceDictionary Source="/Style/Size.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+    <!--基样式-->
+    <Style x:Key="BaseStyle" BasedOn="{x:Null}" TargetType="{x:Type Control}">
+        <Setter Property="FontFamily" Value="{DynamicResource DefaultFontFamily}"></Setter>
+        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}"></Setter>
+        <Setter Property="Foreground" Value="{DynamicResource DefaultForeground}"></Setter>
+    </Style>
+</ResourceDictionary>

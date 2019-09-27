@@ -51,6 +51,18 @@ namespace DeskRedis
             }
         }
 
+
+        #region 本地事件
+        /// <summary>
+        /// 当鼠标在标题栏按下时发生。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GridTitle_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+
         /// <summary>
         /// 当鼠标点击保存按钮时发生。
         /// </summary>
@@ -109,16 +121,6 @@ namespace DeskRedis
             {
                 MessageBox.Show(ex.Message);
             }
-        }
-
-        /// <summary>
-        /// 当鼠标点击取消按钮时发生。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnCancle_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
 
         private void CbShowPassword_CheckChanged(object sender, RoutedEventArgs e)
@@ -211,5 +213,16 @@ namespace DeskRedis
                 MessageBox.Show(ex.Message);
             }
         }
+
+        /// <summary>
+        /// 当鼠标点击关闭按钮时发生
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnClose_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+        #endregion
     }
 }

@@ -1,0 +1,63 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:cc="clr-namespace:DeskRedis.Control.CustomControl">
+    
+    <Style TargetType="{x:Type cc:PathButton}">
+        <Setter Property="MinWidth" Value="70"/>
+        <Setter Property="MinHeight" Value="26"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderBrush" Value="#6495ED"/>
+        <Setter Property="Background" Value="#6495ED"/>
+        <Setter Property="MouseHoverColor" Value="#CC6495ED"/>
+        <Setter Property="MouseClickColor" Value="#6495ED"/>
+        <Setter Property="CornerRadius" Value="10"/>
+        <Setter Property="ImageHeight" Value="15"/>
+        <Setter Property="ImageWidht" Value="15"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type cc:PathButton}">
+                    <Border x:Name="bd"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <StackPanel Orientation="Horizontal"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center">
+                            <!--图片-->
+                            <Path Data="{TemplateBinding PathData}"
+                                  Fill="{TemplateBinding Foreground}"
+                                  Stretch="Fill"
+                                  MinWidth="{TemplateBinding ImageWidht}"
+                                  MinHeight="{TemplateBinding ImageHeight}"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Right"
+                                  Margin="5 2 0 2"
+                                  Width="{TemplateBinding ImageWidht}"
+                                  Height="{TemplateBinding ImageHeight}"/>
+                            <!--文字-->
+                            <ContentPresenter Grid.Column="1" 
+                                              Margin="5 2"
+                                              HorizontalAlignment="Left" 
+                                              RecognizesAccessKey="True" 
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                              VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" TargetName="bd" 
+                                    Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=MouseHoverColor,Mode=TwoWay}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" TargetName="bd" 
+                                    Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=MouseClickColor,Mode=TwoWay}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+</ResourceDictionary>

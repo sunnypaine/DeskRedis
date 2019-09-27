@@ -4,25 +4,63 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DeskRedis"
+        xmlns:cc="clr-namespace:DeskRedis.Control.CustomControl"
         mc:Ignorable="d"
-        Title="添加新连接" Height="280" Width="500" 
-        WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow" ResizeMode="NoResize" Icon="redis.ico">
-    <Grid Margin="10">
+        Title="添加新连接" Height="250" Width="500" 
+        WindowStyle="None" AllowsTransparency="True" WindowStartupLocation="CenterScreen" Icon="redis.ico">
+    <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0"
+        <Border Grid.RowSpan="6"
+                BorderBrush="#6495ED"
+                BorderThickness="1"/>
+
+        <UniformGrid Grid.Row="0"
+                     x:Name="gridTitle"
+                     Background="#6495ED"
+                     Rows="1" Columns="2"
+                     MouseLeftButtonDown="GridTitle_MouseLeftButtonDown">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center">
+                <Image Source="/Images/redis.ico"
+                       Width="20"
+                       Margin="5 0 0 0"/>
+                <TextBlock Text="添加新连接"
+                           Grid.Row="0" Grid.Column="0"
+                           Margin="10 0 0 0"
+                           Foreground="#FFFFFF"
+                           VerticalAlignment="Center" HorizontalAlignment="Left" Width="48"/>
+            </StackPanel>
+            <cc:ImageButton x:Name="btnClose"
+                            Width="20"
+                            Height="20"
+                            Margin="0 0 5 0"
+                            Background="#FF0000"
+                            MouseHoverColor="#CCFF0000"
+                            MouseClickColor="#FF0000"
+                            CornerRadius="0"
+                            HorizontalAlignment="Right"
+                            PathData="{StaticResource ResourceKey=Close}"
+                            Click="BtnClose_Click"/>
+        </UniformGrid>
+        
+        <TextBlock Grid.Row="1"
                    Text="连接信息"
+                   Margin="10 0"
                    VerticalAlignment="Center"/>
 
-        <StackPanel Grid.Row="1"
+        <StackPanel Grid.Row="2"
                     Orientation="Horizontal"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Stretch">
+                    VerticalAlignment="Stretch"
+                    Margin="10 0">
             <TextBlock Text="名称"
                        Margin="0 0 20 0"
                        VerticalAlignment="Center"/>
@@ -33,9 +71,10 @@
                      VerticalAlignment="Center"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="2"
+        <StackPanel Grid.Row="3"
                     Orientation="Horizontal"
-                   VerticalAlignment="Stretch">
+                    VerticalAlignment="Stretch"
+                    Margin="10 0">
             <TextBlock Text="地址"
                        Margin="0 0 20 0"
                        VerticalAlignment="Center"/>
@@ -56,10 +95,11 @@
                      VerticalAlignment="Center"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="3"
+        <StackPanel Grid.Row="4"
                     Orientation="Horizontal"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Center">
+                    VerticalAlignment="Center"
+                    Margin="10 0">
             <TextBlock Text="密码"
                        Margin="0 0 20 0"
                        VerticalAlignment="Center"/>
@@ -85,7 +125,7 @@
                       Unchecked="CbShowPassword_CheckChanged"/>
         </StackPanel>
 
-        <Grid Grid.Row="4" Margin="0 20 0 0">
+        <Grid Grid.Row="5" Margin="10 20 10 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="1*"/>
@@ -94,27 +134,33 @@
                         Orientation="Horizontal"
                         VerticalAlignment="Top"
                         HorizontalAlignment="Left">
-                <Button x:Name="btnTestConnect"
-                        Content="测试连接"
-                        Height="26"
-                        Width="60"
-                        Click="BtnTestConnect_Click"/>
+                <cc:PathButton x:Name="btnTestConnect"
+                               Content="测试连接"
+                               Height="26"
+                               Width="90"
+                               CornerRadius="0"
+                               PathData="{StaticResource ResourceKey=Connect}"
+                               Click="BtnTestConnect_Click"/>
             </StackPanel>
             <StackPanel Grid.Column="1"
                         Orientation="Horizontal"
                         VerticalAlignment="Top"
                         HorizontalAlignment="Right">
-                <Button x:Name="btnCancle"
-                        Content="取 消"
-                        Height="26"
-                        Width="60"
-                        Click="BtnCancle_Click"/>
-                <Button x:Name="btnSave"
-                        Content="保 存"
-                        Height="26"
-                        Width="60"
-                        Margin="20 0 0 0"
-                        Click="BtnSave_Click"/>
+                <cc:PathButton x:Name="btnCancle"
+                               Content="取 消"
+                               Height="26"
+                               Width="60"
+                               CornerRadius="1"
+                               PathData="{StaticResource ResourceKey=Cancel}"
+                               Click="BtnClose_Click"/>
+                <cc:PathButton x:Name="btnSave"
+                               Content="保 存"
+                               Height="26"
+                               Width="60"
+                               Margin="20 0 0 0"
+                               CornerRadius="0"
+                               PathData="{StaticResource ResourceKey=Save}"
+                               Click="BtnSave_Click"/>
             </StackPanel>
         </Grid>
     </Grid>

@@ -1,0 +1,8 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:DeskRedis.Themes">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/DeskRedis;component/Control/Style/PathButtonStyle.xaml"/>
+        <ResourceDictionary Source="/DeskRedis;component/Control/Style/ImageButtonStyle.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

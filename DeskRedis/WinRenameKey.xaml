@@ -4,12 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DeskRedis"
+        xmlns:cc="clr-namespace:DeskRedis.Control.CustomControl"
         mc:Ignorable="d"
-        Title="重命名键" Height="120" Width="280"
+        Title="重命名键" Height="130" Width="280"
         WindowStyle="None" AllowsTransparency="True" WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="26"/>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
@@ -23,20 +24,22 @@
                      Rows="1" Columns="2">
             <TextBlock Text="重命名键"
                        Grid.Row="0" Grid.Column="0"
-                       Margin="5 0 0 0"
+                       Margin="5,6,0,6"
                        Foreground="#FFFFFF"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Left"/>
-            <Button x:Name="btnClose"
-                    Content="关"
-                    Width="20"
-                    Height="20"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Right"
-                    Margin="3"
-                    Click="BtnClose_Click"/>
+                       VerticalAlignment="Center" HorizontalAlignment="Left" Width="48"/>
+            <cc:ImageButton x:Name="btnClose"
+                            Width="20"
+                            Height="20"
+                            Margin="0 0 5 0"
+                            Background="#FF0000"
+                            MouseHoverColor="#CCFF0000"
+                            MouseClickColor="#FF0000"
+                            CornerRadius="0"
+                            HorizontalAlignment="Right"
+                            PathData="{StaticResource ResourceKey=Close}"
+                            Click="BtnClose_Click"/>
         </UniformGrid>
-        
+
         <StackPanel Grid.Row="1"
                     Margin="5 0"
                     Orientation="Horizontal"
@@ -45,7 +48,7 @@
             <TextBlock Text="原key: "/>
             <TextBlock x:Name="tblockKey"/>
         </StackPanel>
-        
+
         <StackPanel Grid.Row="2"
                     Margin="5 0"
                     Orientation="Horizontal"

@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:DeskRedis.Control.Style">
+    
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Style/BaseControlStyle.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style BasedOn="{StaticResource BaseControlStyle}" TargetType="{x:Type TextBox}">
+        <Style.Triggers>
+            <Trigger Property="IsReadOnly" Value="True">
+                <Setter Property="Background" Value="#eee"/>
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Cursor" Value="IBeam"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style BasedOn="{StaticResource BaseControlStyle}" TargetType="{x:Type PasswordBox}">
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Cursor" Value="IBeam"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>

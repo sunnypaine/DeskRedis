@@ -21,6 +21,16 @@ namespace DeskRedis
         /// 当前选中的节点。
         /// </summary>
         private TreeViewItem currentSelectedTreeViewItem;
+
+        /// <summary>
+        /// 是否最大化窗口。
+        /// </summary>
+        private bool isFullScreen = false;
+
+        /// <summary>
+        /// 普通窗口状态时的大小。
+        /// </summary>
+        private Rect normalRect = new Rect();
         #endregion
 
 
@@ -30,6 +40,8 @@ namespace DeskRedis
             InitializeComponent();
 
             this.Loaded += MainWindow_Loaded;
+            this.btnMax.AddHandler(Button.MouseDownEvent, new RoutedEventHandler(this.BtnMax_MouseDown), true);
+            this.btnMax.AddHandler(Button.MouseUpEvent, new RoutedEventHandler(this.BtnMax_MouseUp), true);
         }
         #endregion
 
@@ -475,6 +487,16 @@ namespace DeskRedis
         }
 
         /// <summary>
+        /// 当时鼠标在标题栏按下时发生。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GridTitle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+
+        /// <summary>
         /// 当时鼠标点击“刷新”按钮时发生。
         /// </summary>
         /// <param name="sender"></param>
@@ -810,6 +832,69 @@ namespace DeskRedis
         {
             NodeInfo nodeInfo = this.currentSelectedTreeViewItem.Tag as NodeInfo;
             this.ReadValue(nodeInfo);
+        }
+
+        /// <summary>
+        /// 当鼠标点击最小化按钮时发生。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnMin_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        /// <summary>
+        /// 当鼠标在最大化按钮上按下时发生。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnMax_MouseDown(object sender, RoutedEventArgs e)
+        {
+            if (!this.isFullScreen)//如果窗口是常规状态，则执行最大化
+            {
+                this.normalRect.Width = this.Width;
+                this.normalRect.Height = this.Height;
+                this.normalRect.X = this.Left;
+                this.normalRect.Y = this.Top;
+            }
+        }
+
+        /// <summary>
+        /// 当鼠标具有最大化按钮的按下焦点并松开时发生。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnMax_MouseUp(object sender, RoutedEventArgs e)
+        {
+            if (!this.isFullScreen)//如果窗口是常规状态，则执行最大化
+            {
+                this.Top = 0;
+                this.Left = 0;
+                this.Width = SystemParameters.WorkArea.Width;
+                this.Height = SystemParameters.WorkArea.Height;
+
+                this.isFullScreen = true;
+            }
+            else//如果是最大化状态，则执行还原
+            {
+                this.Width = this.normalRect.Width;
+                this.Height = this.normalRect.Height;
+                this.Left = this.normalRect.X;
+                this.Top = this.normalRect.Y;
+
+                this.isFullScreen = false;
+            }
+        }
+
+        /// <summary>
+        /// 当鼠标点击关闭按钮时发生。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnExit_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
         #endregion
     }
