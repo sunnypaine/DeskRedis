@@ -40,11 +40,11 @@ namespace DeskRedis.Util
         /// <summary>
         /// 表单校验
         /// </summary>
-        /// <param name="tip">提示信息。当func委托返回false时生效。</param>
+        /// <param name="tip">提示信息。当func委托返回true时生效。</param>
         /// <param name="func">指定用于校验参数是否合法的委托。</param>
         public static void FormDataValidate(string tip, Func<bool> func)
         {
-            if (!func())
+            if (func())
             {
                 throw new IllegalFormDataException(tip);
             }

@@ -447,7 +447,7 @@ namespace DeskRedis
             else if (crudType == ConfigOperationType.EDIT)
             {
                 this.currentSelectedTreeViewItem.Items.Clear();
-                this.currentSelectedTreeViewItem.Tag = config;
+                this.currentSelectedTreeViewItem.Tag = new NodeInfo() { ConfigId = config.Id, Header = config.Name };
                 this.currentSelectedTreeViewItem.Header = config.Name;
             }
         }
@@ -550,14 +550,16 @@ namespace DeskRedis
             }
             if (MenuItemType.EDIT.Equals(nodeInfo.Type))
             {
-                if (MessageBox.Show("该操作将关闭连接！是否继续？", "操作提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                if (this.currentSelectedTreeViewItem.HasItems
+                    && MessageBox.Show("该操作将关闭连接！是否继续？", "操作提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
                     this.currentSelectedTreeViewItem.Items.Clear();
-                    WinAddConnection winAddConnection = new WinAddConnection(nodeInfo.ConfigId, ConfigOperationType.EDIT);
-                    winAddConnection.SavedConnectionConfig += this.WinAddConnection_SavedConnectionConfig;
-                    winAddConnection.ShowDialog();
-                    winAddConnection.SavedConnectionConfig -= this.WinAddConnection_SavedConnectionConfig;
                 }
+
+                WinAddConnection winAddConnection = new WinAddConnection(nodeInfo.ConfigId, ConfigOperationType.EDIT);
+                winAddConnection.SavedConnectionConfig += this.WinAddConnection_SavedConnectionConfig;
+                winAddConnection.ShowDialog();
+                winAddConnection.SavedConnectionConfig -= this.WinAddConnection_SavedConnectionConfig;
 
                 return;
             }
@@ -706,12 +708,19 @@ namespace DeskRedis
         /// <param name="e"></param>
         private void Root_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            TreeViewItem item = sender as TreeViewItem;
-            if (item.HasItems)
+            try
             {
-                return;
+                TreeViewItem item = sender as TreeViewItem;
+                if (item.HasItems)
+                {
+                    return;
+                }
+                this.CreateDBNode(item);
             }
-            this.CreateDBNode(item);
+            catch (Exception ex)
+            {
+                this.SetLog(this.tbLog, $"打开连接错误：{ex.Message}");
+            }
         }
 
         /// <summary>

@@ -72,7 +72,7 @@ namespace DeskRedis
         {
             try
             {
-                AssertUtil.FormDataValidate("请输入键", () => { return !string.IsNullOrEmpty(this.tbKey.Text.Trim()); });
+                AssertUtil.FormDataValidate("请输入键", () => { return string.IsNullOrEmpty(this.tbKey.Text.Trim()); });
                 string key = this.tbKey.Text.Trim();
 
                 RedisValue redisValue = GlobalBusiness.RedisCaches[this.configId].Get(key, this.dbIndex);

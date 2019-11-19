@@ -1,4 +1,5 @@
 ﻿using DeskRedis.Exceptions;
+using DeskRedis.Util;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
@@ -73,10 +74,7 @@ namespace DeskRedis
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(this.tbNewKey.Text.Trim()))
-                {
-                    throw new IllegalFormDataException("请输入合法的键。");
-                }
+                AssertUtil.FormDataValidate("请输入合法的键。", () => { return string.IsNullOrWhiteSpace(this.tbNewKey.Text.Trim()); });
 
                 if (GlobalBusiness.RedisCaches[configId].Get(this.tbNewKey.Text.Trim(), this.index) != null)
                 {
