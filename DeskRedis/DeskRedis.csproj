@@ -115,6 +115,7 @@
     <Compile Include="Control\CustomControl\PathButton.cs" />
     <Compile Include="Enums\ConfigOperationType.cs" />
     <Compile Include="Enums\MenuItemType.cs" />
+    <Compile Include="Enums\NodeType.cs" />
     <Compile Include="Exceptions\DuplicateMemberException.cs" />
     <Compile Include="Exceptions\IllegalFormDataException.cs" />
     <Compile Include="Exceptions\StringArgumentEmptyException.cs" />

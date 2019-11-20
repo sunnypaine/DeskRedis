@@ -74,18 +74,10 @@ namespace DeskRedis
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(this.tbConnName.Text))
-                {
-                    throw new IllegalFormDataException("名称不能为空。");
-                }
-                if (string.IsNullOrWhiteSpace(this.tbConnIP.Text))
-                {
-                    throw new IllegalFormDataException("地址不能为空。");
-                }
-                if (string.IsNullOrWhiteSpace(this.tbConnPort.Text))
-                {
-                    throw new IllegalFormDataException("端口不能为空。");
-                }
+                AssertUtil.FormDataValidate("名称不能为空。", () => { return string.IsNullOrWhiteSpace(this.tbConnName.Text); });
+                AssertUtil.FormDataValidate("地址不能为空。", () => { return string.IsNullOrWhiteSpace(this.tbConnIP.Text); });
+                AssertUtil.FormDataValidate("端口不能为空。", () => { return string.IsNullOrWhiteSpace(this.tbConnPort.Text); });
+                AssertUtil.FormDataValidate("端口不合法。", () => { return !Regex.IsMatch(this.tbConnPort.Text, @"^[+-]?\d*$"); });
 
                 ConnectionConfig config = new ConnectionConfig()
                 {
