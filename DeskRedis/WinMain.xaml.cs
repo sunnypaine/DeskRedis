@@ -74,7 +74,7 @@ namespace DeskRedis
             tree.FontFamily = new FontFamily("courier new;microsoft yahei ui;宋体");
 
             TreeViewItem root = new TreeViewItem();
-            NodeInfo nodeInfo = new NodeInfo() { ConfigId = config.Id, Header = config.Name };
+            NodeInfo nodeInfo = new NodeInfo() { NodeType = NodeType.Connection, ConfigId = config.Id, Header = config.Name };
             root.Name = "root_" + config.Id;
             root.Header = config.Name;
             root.Tag = nodeInfo;
@@ -108,7 +108,7 @@ namespace DeskRedis
                         this.Dispatcher.Invoke(() =>
                         {
                             TreeViewItem item = new TreeViewItem();
-                            NodeInfo info = new NodeInfo() { ConfigId = config.Id, DbIndex = i, Header = "db" + i };
+                            NodeInfo info = new NodeInfo() { NodeType = NodeType.DataBase, ConfigId = config.Id, DbIndex = i, Header = "db" + i };
                             item.Name = parent.Name + "_" + i;
                             item.Header = "db" + i;
                             item.Tag = info;
@@ -145,7 +145,7 @@ namespace DeskRedis
                 if (info.IsKey)
                 {
                     TreeViewItem keyItem = new TreeViewItem();
-                    NodeInfo keyNodeInfo = new NodeInfo() { ConfigId = nodeInfo.ConfigId, Header = info.Header, DbIndex = nodeInfo.DbIndex, Key = info.Key };
+                    NodeInfo keyNodeInfo = new NodeInfo() {NodeType = NodeType.Key, ConfigId = nodeInfo.ConfigId, Header = info.Header, DbIndex = nodeInfo.DbIndex, Key = info.Key };
                     keyItem.Header = info.Header;
                     keyItem.Tag = keyNodeInfo;
                     keyItem.Margin = new Thickness(0, 2, 0, 2);
@@ -157,7 +157,7 @@ namespace DeskRedis
                 else
                 {
                     TreeViewItem item = new TreeViewItem();
-                    NodeInfo itemNodeInfo = new NodeInfo() { ConfigId = nodeInfo.ConfigId, Header = info.Header, DbIndex = nodeInfo.DbIndex, Key = info.Header };
+                    NodeInfo itemNodeInfo = new NodeInfo() { NodeType = NodeType.Folder, ConfigId = nodeInfo.ConfigId, Header = info.Header, DbIndex = nodeInfo.DbIndex, Key = info.Header };
                     item.Header = info.Header;
                     item.Tag = itemNodeInfo;
                     item.Margin = new Thickness(0, 2, 0, 2);
@@ -171,7 +171,7 @@ namespace DeskRedis
                         foreach (KeyInfo key in info.Keys)
                         {
                             TreeViewItem keyItem = new TreeViewItem();
-                            NodeInfo keyNodeInfo = new NodeInfo() { ConfigId = nodeInfo.ConfigId, Header = key.Header, DbIndex = nodeInfo.DbIndex, Key = key.Key };
+                            NodeInfo keyNodeInfo = new NodeInfo() { NodeType = NodeType.Key, ConfigId = nodeInfo.ConfigId, Header = key.Header, DbIndex = nodeInfo.DbIndex, Key = key.Key };
                             keyItem.Header = key.Header;
                             keyItem.Tag = keyNodeInfo;
                             keyItem.Margin = new Thickness(0, 2, 0, 2);

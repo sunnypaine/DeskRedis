@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="Style/Color.xaml"/>
                 <ResourceDictionary Source="Style/PathData.xaml"/>
                 <ResourceDictionary Source="Style/ScrollStyle.xaml"/>
+                <ResourceDictionary Source="Style/TreeViewItemStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

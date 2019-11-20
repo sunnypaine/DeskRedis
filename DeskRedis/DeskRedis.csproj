@@ -111,8 +111,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Comm\Factory\PathFactory.cs" />
     <Compile Include="Control\CustomControl\ImageButton.cs" />
     <Compile Include="Control\CustomControl\PathButton.cs" />
+    <Compile Include="Converter\TreeViewItemIconConverter.cs" />
+    <Compile Include="Converter\TreeViewLastItemConverter.cs" />
     <Compile Include="Enums\ConfigOperationType.cs" />
     <Compile Include="Enums\MenuItemType.cs" />
     <Compile Include="Enums\NodeType.cs" />
@@ -175,6 +178,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Style\ScrollStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Style\TreeViewItemStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
