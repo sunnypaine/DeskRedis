@@ -34,5 +34,10 @@ namespace DeskRedis.Model
         /// 选项类型
         /// </summary>
         public MenuItemType Type { get; set; }
+
+        /// <summary>
+        /// 节点类型
+        /// </summary>
+        public NodeType NodeType { get; set; }
     }
 }
