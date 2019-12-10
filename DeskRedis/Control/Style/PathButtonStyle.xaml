@@ -7,10 +7,10 @@
         <Setter Property="MinHeight" Value="26"/>
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="BorderBrush" Value="#6495ED"/>
-        <Setter Property="Background" Value="#6495ED"/>
-        <Setter Property="MouseHoverColor" Value="#CC6495ED"/>
-        <Setter Property="MouseClickColor" Value="#6495ED"/>
+        <Setter Property="BorderBrush" Value="#5B6D99"/>
+        <Setter Property="Background" Value="#5B6D99"/>
+        <Setter Property="MouseHoverColor" Value="#CC5B6D99"/>
+        <Setter Property="MouseClickColor" Value="#5B6D99"/>
         <Setter Property="CornerRadius" Value="10"/>
         <Setter Property="ImageHeight" Value="15"/>
         <Setter Property="ImageWidht" Value="15"/>

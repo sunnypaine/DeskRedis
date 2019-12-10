@@ -1,72 +1,52 @@
-﻿<Window x:Class="DeskRedis.WinRenameKey"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DeskRedis"
-        xmlns:cc="clr-namespace:DeskRedis.Control.CustomControl"
-        mc:Ignorable="d"
-        Title="重命名键" Height="130" Width="280"
-        WindowStyle="None" AllowsTransparency="True" WindowStartupLocation="CenterScreen">
+﻿<cc:DialogWindow x:Class="DeskRedis.WinRenameKey"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:local="clr-namespace:DeskRedis"
+                 xmlns:cc="clr-namespace:DeskRedis.Control.CustomControl"
+                 mc:Ignorable="d"
+                 Title="重命名键" Height="130" Width="280" Background="#FFFFFF" Icon="redis.ico">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="30"/>
-            <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Border Grid.RowSpan="4"
-                BorderThickness="2"
-                BorderBrush="#6495ED"/>
-
-        <UniformGrid Grid.Row="0"
-                     Background="#6495ED"
-                     Rows="1" Columns="2">
-            <TextBlock Text="重命名键"
-                       Grid.Row="0" Grid.Column="0"
-                       Margin="5,6,0,6"
-                       Foreground="#FFFFFF"
-                       VerticalAlignment="Center" HorizontalAlignment="Left" Width="48"/>
-            <cc:ImageButton x:Name="btnClose"
-                            Width="20"
-                            Height="20"
-                            Margin="0 0 5 0"
-                            Background="#FF0000"
-                            MouseHoverColor="#CCFF0000"
-                            MouseClickColor="#FF0000"
-                            CornerRadius="0"
-                            HorizontalAlignment="Right"
-                            PathData="{StaticResource ResourceKey=Close}"
-                            Click="BtnClose_Click"/>
-        </UniformGrid>
+        
+        <StackPanel Grid.Row="0"
+                    Margin="5 0"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Left">
+            <TextBlock Text="原key: "
+                       VerticalAlignment="Center"/>
+            <TextBlock x:Name="tblockKey"/>
+        </StackPanel>
 
         <StackPanel Grid.Row="1"
                     Margin="5 0"
                     Orientation="Horizontal"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Left">
-            <TextBlock Text="原key: "/>
-            <TextBlock x:Name="tblockKey"/>
-        </StackPanel>
-
-        <StackPanel Grid.Row="2"
-                    Margin="5 0"
-                    Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    HorizontalAlignment="Left">
-            <TextBlock Text="新key"/>
+            <TextBlock Text="新key"
+                       VerticalAlignment="Center"/>
             <TextBox x:Name="tbNewKey"
                      Width="226"
-                     Margin="5 0 0 0"/>
+                     Margin="5 0 0 0"
+                     VerticalContentAlignment="Center"
+                     VerticalAlignment="Center"/>
         </StackPanel>
 
-        <Button x:Name="btnUpdate"
-                Content="修 改"
-                Width="50"
-                Height="20"
-                Grid.Row="3"
-                Margin="0 0 10 0"
-                HorizontalAlignment="Right"
-                Click="BtnUpdate_Click"/>
+        <cc:PathButton Grid.Row="2"
+                       x:Name="btnUpdate"
+                       Content="修 改"
+                       Width="50"
+                       Height="20"
+                       Margin="0 0 10 0"
+                       CornerRadius="0"
+                       HorizontalAlignment="Right"
+                       PathData="{StaticResource ResourceKey=Edit}"
+                       Click="BtnUpdate_Click"/>
     </Grid>
-</Window>
+</cc:DialogWindow>

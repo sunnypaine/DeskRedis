@@ -34,14 +34,15 @@
                         <cc:ImageButton x:Name="btnHelp"
                                         Width="28"
                                         Height="28"
+                                        ImageHeight="16"
+                                        ImageWidht="16"
                                         Margin="0 0 10 0"
                                         Background="#6495ED"
                                         MouseHoverColor="#CCB9D3EE"
                                         MouseClickColor="#B9D3EE"
                                         Visibility="Collapsed"
                                         CornerRadius="0"
-                                        ImageHeight="2"
-                                        PathData="{StaticResource ResourceKey=Refresh}"/>
+                                        PathData="{StaticResource ResourceKey=Help}"/>
                         <!--最小化按钮-->
                         <cc:ImageButton x:Name="btnMin"
                                         Width="28"
@@ -51,11 +52,14 @@
                                         MouseClickColor="#B9D3EE"
                                         CornerRadius="0"
                                         ImageHeight="2"
+                                        ImageWidht="16"
                                         PathData="{StaticResource ResourceKey=Min}"/>
                         <!--最大化按钮-->
                         <cc:ImageButton x:Name="btnMax"
                                         Width="28"
                                         Height="28"
+                                        ImageHeight="16"
+                                        ImageWidht="16"
                                         Background="#6495ED"
                                         MouseHoverColor="#CCB9D3EE"
                                         MouseClickColor="#B9D3EE"
@@ -65,17 +69,19 @@
                         <cc:ImageButton x:Name="btnNormal"
                                         Width="28"
                                         Height="28"
+                                        ImageHeight="16"
+                                        ImageWidht="16"
                                         Background="#6495ED"
                                         MouseHoverColor="#CCB9D3EE"
                                         MouseClickColor="#B9D3EE"
                                         CornerRadius="0"
-                                        PathData="{StaticResource ResourceKey=Max}"/>
+                                        PathData="{StaticResource ResourceKey=Normal}"/>
                         <!--退出按钮-->
                         <cc:ImageButton x:Name="btnClose"
                                         Width="28"
                                         Height="28"
-                                        ImageHeight="20"
-                                        ImageWidht="20"
+                                        ImageHeight="16"
+                                        ImageWidht="16"
                                         Margin="0 0 1 0"
                                         Background="#FF0000"
                                         MouseHoverColor="#CCFF0000"
@@ -125,14 +131,15 @@
                         <cc:ImageButton x:Name="btnHelp"
                                         Width="28"
                                         Height="28"
+                                        ImageHeight="16"
+                                        ImageWidht="16"
                                         Margin="0 0 10 0"
                                         Background="#6495ED"
                                         MouseHoverColor="#CCB9D3EE"
                                         MouseClickColor="#B9D3EE"
                                         Visibility="Collapsed"
                                         CornerRadius="0"
-                                        ImageHeight="2"
-                                        PathData="{StaticResource ResourceKey=Refresh}"/>
+                                        PathData="{StaticResource ResourceKey=Help}"/>
                         <!--最小化按钮-->
                         <cc:ImageButton x:Name="btnMin"
                                         Width="28"
@@ -142,13 +149,14 @@
                                         MouseClickColor="#B9D3EE"
                                         CornerRadius="0"
                                         ImageHeight="2"
+                                        ImageWidht="16"
                                         PathData="{StaticResource ResourceKey=Min}"/>
                         <!--退出按钮-->
-                        <cc:ImageButton x:Name="btnExit"
+                        <cc:ImageButton x:Name="btnClose"
                                         Width="28"
                                         Height="28"
-                                        ImageHeight="20"
-                                        ImageWidht="20"
+                                        ImageHeight="16"
+                                        ImageWidht="16"
                                         Margin="0 0 1 0"
                                         Background="#FF0000"
                                         MouseHoverColor="#CCFF0000"

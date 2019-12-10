@@ -1,4 +1,5 @@
-﻿using DeskRedis.Exceptions;
+﻿using DeskRedis.Control.CustomControl;
+using DeskRedis.Exceptions;
 using DeskRedis.Util;
 using ServiceStack.Redis;
 using System;
@@ -20,7 +21,7 @@ namespace DeskRedis
     /// <summary>
     /// WinRenameKey.xaml 的交互逻辑
     /// </summary>
-    public partial class WinRenameKey : Window
+    public partial class WinRenameKey : DialogWindow
     {
         #region 私有变量
         /// <summary>
@@ -56,6 +57,8 @@ namespace DeskRedis
         public WinRenameKey(string configId, int index, string key)
         {
             InitializeComponent();
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            this.IsShowHelp = false;
 
             this.configId = configId;
             this.index = index;

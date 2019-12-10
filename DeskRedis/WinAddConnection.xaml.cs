@@ -1,4 +1,5 @@
-﻿using DeskRedis.Enums;
+﻿using DeskRedis.Control.CustomControl;
+using DeskRedis.Enums;
 using DeskRedis.Exceptions;
 using DeskRedis.Model.Configs;
 using DeskRedis.Util;
@@ -14,7 +15,7 @@ namespace DeskRedis
     /// <summary>
     /// WinAddConnection.xaml 的交互逻辑
     /// </summary>
-    public partial class WinAddConnection : Window
+    public partial class WinAddConnection : DialogWindow
     {
         private ConfigOperationType configOperationType;
         private string configId;
@@ -40,6 +41,8 @@ namespace DeskRedis
         public WinAddConnection(string connId, ConfigOperationType configOperationType)
         {
             InitializeComponent();
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            this.IsShowHelp = false;
 
             this.configOperationType = configOperationType;
             if (!string.IsNullOrWhiteSpace(connId))

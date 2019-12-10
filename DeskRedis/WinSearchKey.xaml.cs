@@ -1,4 +1,5 @@
-﻿using DeskRedis.Exceptions;
+﻿using DeskRedis.Control.CustomControl;
+using DeskRedis.Exceptions;
 using DeskRedis.Model;
 using DeskRedis.Util;
 using ServiceStack.Redis;
@@ -21,7 +22,7 @@ namespace DeskRedis
     /// <summary>
     /// WinSearchKey.xaml 的交互逻辑
     /// </summary>
-    public partial class WinSearchKey : Window
+    public partial class WinSearchKey : DialogWindow
     {
         #region 私有变量
         /// <summary>
@@ -45,6 +46,8 @@ namespace DeskRedis
         public WinSearchKey()
         {
             InitializeComponent();
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            this.IsShowHelp = false;
         }
 
         /// <summary>

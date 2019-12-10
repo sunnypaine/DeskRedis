@@ -6,15 +6,13 @@
                  xmlns:local="clr-namespace:DeskRedis"
                  xmlns:cc="clr-namespace:DeskRedis.Control.CustomControl"
                  mc:Ignorable="d"
-                 Title="RedisClient" Height="800" Width="1300" MinHeight="600" MinWidth="1000" Background="#FFFFFF">
+                 Title="RedisClient" Height="800" Width="1300" MinHeight="600" MinWidth="1000" 
+                 Background="#FFFFFF" Icon="redis.ico">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Border BorderThickness="1"
-                BorderBrush="#6495ED"
-                Grid.RowSpan="3"/>
         <!--基础操作-->
         <Border Grid.Row="0"
                 BorderThickness="0 0 0 1"
