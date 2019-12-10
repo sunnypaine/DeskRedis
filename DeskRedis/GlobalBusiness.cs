@@ -119,6 +119,9 @@ namespace DeskRedis
 
             JsonConfigUtil.SetConfigObject<List<ConnectionConfig>>(PathConnections, configs);
             DictConnectionConfig[config.Id] = config;
+            string host = (string.IsNullOrEmpty(config.Password) ? "" : $"{config.Password}@") + $"{config.IP}:{config.Port}";
+            string[] hosts = new string[] { host };
+            RedisCaches[config.Id]= new RedisCache(hosts, hosts);
         }
 
         /// <summary>

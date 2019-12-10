@@ -38,6 +38,9 @@
     <ApplicationIcon>redis.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Windows.Shell">
+      <HintPath>..\packages\Microsoft.Window\Microsoft.Windows.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -112,7 +115,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Comm\Factory\PathFactory.cs" />
+    <Compile Include="Control\CustomControl\DialogWindow.cs" />
     <Compile Include="Control\CustomControl\ImageButton.cs" />
+    <Compile Include="Control\CustomControl\NormalWindow.cs" />
     <Compile Include="Control\CustomControl\PathButton.cs" />
     <Compile Include="Converter\TreeViewItemIconConverter.cs" />
     <Compile Include="Converter\TreeViewLastItemConverter.cs" />
@@ -182,6 +187,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Style\TreeViewItemStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Style\WindowStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
