@@ -119,6 +119,7 @@
     <Compile Include="Control\CustomControl\ImageButton.cs" />
     <Compile Include="Control\CustomControl\NormalWindow.cs" />
     <Compile Include="Control\CustomControl\PathButton.cs" />
+    <Compile Include="Control\CustomControl\TreeViewItemWithOperator.cs" />
     <Compile Include="Converter\TreeViewItemIconConverter.cs" />
     <Compile Include="Converter\TreeViewLastItemConverter.cs" />
     <Compile Include="Enums\ConfigOperationType.cs" />

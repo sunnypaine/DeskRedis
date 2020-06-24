@@ -21,7 +21,7 @@ namespace DeskRedis
         /// <summary>
         /// 当前选中的节点。
         /// </summary>
-        private TreeViewItem currentSelectedTreeViewItem;
+        private TreeViewItemWithOperator currentSelectedTreeViewItem;
         #endregion
 
 
@@ -64,15 +64,18 @@ namespace DeskRedis
             tree.FontSize = 14;
             tree.FontFamily = new FontFamily("courier new;microsoft yahei ui;宋体");
 
-            TreeViewItem root = new TreeViewItem();
+            TreeViewItemWithOperator root = new TreeViewItemWithOperator();
             NodeInfo nodeInfo = new NodeInfo() { NodeType = NodeType.Connection, ConfigId = config.Id, Header = config.Name };
             root.Name = "root_" + config.Id;
             root.Header = config.Name;
-            root.Tag = nodeInfo;
+            root.NodeInfo = nodeInfo;
             root.Margin = new Thickness(0, 2, 0, 2);
             root.FontWeight = FontWeights.Bold;
+            root.ClearVisibility = false;
             root.MouseUp += Node_MouseUp;
             root.MouseDoubleClick += Root_MouseDoubleClick;
+            root.OnClear += TreeViewItem_Clear;
+            root.OnRefresh += TreeViewItem_Refresh;
             root.ContextMenu = this.CreateRootContextMenu(nodeInfo);
             tree.Items.Add(root);
             return tree;
@@ -82,9 +85,9 @@ namespace DeskRedis
         /// 创建DB列表节点
         /// </summary>
         /// <param name="parent"></param>
-        private void CreateDBNode(TreeViewItem parent)
+        private void CreateDBNode(TreeViewItemWithOperator parent)
         {
-            NodeInfo nodeInfo = parent.Tag as NodeInfo;
+            NodeInfo nodeInfo = parent.NodeInfo;
             ConnectionConfig config = GlobalBusiness.DictConnectionConfig[nodeInfo.ConfigId];
             Task.Run(() =>
             {
@@ -98,11 +101,11 @@ namespace DeskRedis
                     {
                         this.Dispatcher.Invoke(() =>
                         {
-                            TreeViewItem item = new TreeViewItem();
+                            TreeViewItemWithOperator item = new TreeViewItemWithOperator();
                             NodeInfo info = new NodeInfo() { NodeType = NodeType.DataBase, ConfigId = config.Id, DbIndex = i, Header = "db" + i };
                             item.Name = parent.Name + "_" + i;
                             item.Header = "db" + i;
-                            item.Tag = info;
+                            item.NodeInfo = info;
                             item.Margin = new Thickness(0, 2, 0, 2);
                             item.FontWeight = FontWeights.Normal;
                             item.Foreground = new SolidColorBrush(Colors.DarkBlue);
@@ -126,19 +129,19 @@ namespace DeskRedis
         /// 创建键节点
         /// </summary>
         /// <param name="parent"></param>
-        private void CreateKeyNode(TreeViewItem parent, List<string> keys)
+        private void CreateKeyNode(TreeViewItemWithOperator parent, List<string> keys)
         {
-            NodeInfo nodeInfo = parent.Tag as NodeInfo;
+            NodeInfo nodeInfo = parent.NodeInfo;
             List<KeyInfo> keyInfos = this.ParseKeys(keys);
 
             foreach (KeyInfo info in keyInfos)
             {
                 if (info.IsKey)
                 {
-                    TreeViewItem keyItem = new TreeViewItem();
+                    TreeViewItemWithOperator keyItem = new TreeViewItemWithOperator();
                     NodeInfo keyNodeInfo = new NodeInfo() { NodeType = NodeType.Key, ConfigId = nodeInfo.ConfigId, Header = info.Header, DbIndex = nodeInfo.DbIndex, Key = info.Key };
                     keyItem.Header = info.Header;
-                    keyItem.Tag = keyNodeInfo;
+                    keyItem.NodeInfo = keyNodeInfo;
                     keyItem.Margin = new Thickness(0, 2, 0, 2);
                     keyItem.FontWeight = FontWeights.Normal;
                     keyItem.ContextMenu = this.CreateKeyContextMenu(keyNodeInfo);
@@ -147,10 +150,10 @@ namespace DeskRedis
                 }
                 else
                 {
-                    TreeViewItem item = new TreeViewItem();
+                    TreeViewItemWithOperator item = new TreeViewItemWithOperator();
                     NodeInfo itemNodeInfo = new NodeInfo() { NodeType = NodeType.Folder, ConfigId = nodeInfo.ConfigId, Header = info.Header, DbIndex = nodeInfo.DbIndex, Key = info.Header };
                     item.Header = info.Header;
-                    item.Tag = itemNodeInfo;
+                    item.NodeInfo = itemNodeInfo;
                     item.Margin = new Thickness(0, 2, 0, 2);
                     item.ContextMenu?.Items.Clear();
                     item.FontWeight = FontWeights.Normal;
@@ -161,10 +164,10 @@ namespace DeskRedis
                     {
                         foreach (KeyInfo key in info.Keys)
                         {
-                            TreeViewItem keyItem = new TreeViewItem();
+                            TreeViewItemWithOperator keyItem = new TreeViewItemWithOperator();
                             NodeInfo keyNodeInfo = new NodeInfo() { NodeType = NodeType.Key, ConfigId = nodeInfo.ConfigId, Header = key.Header, DbIndex = nodeInfo.DbIndex, Key = key.Key };
                             keyItem.Header = key.Header;
-                            keyItem.Tag = keyNodeInfo;
+                            keyItem.NodeInfo = keyNodeInfo;
                             keyItem.Margin = new Thickness(0, 2, 0, 2);
                             keyItem.FontWeight = FontWeights.Normal;
                             keyItem.ContextMenu = this.CreateKeyContextMenu(keyNodeInfo);
@@ -184,7 +187,7 @@ namespace DeskRedis
         /// <returns></returns>
         private ContextMenu CreateRootContextMenu(NodeInfo nodeInfo)
         {
-            System.Windows.Controls.ContextMenu menu = new ContextMenu();
+            ContextMenu menu = new ContextMenu();
             MenuItem itemOpen = new MenuItem();
             itemOpen.Name = "MenuItem_Root_Open_" + nodeInfo.ConfigId;
             itemOpen.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.OPEN };
@@ -236,7 +239,7 @@ namespace DeskRedis
         /// <returns></returns>
         private ContextMenu CreateDBContextMenu(NodeInfo nodeInfo)
         {
-            System.Windows.Controls.ContextMenu menu = new ContextMenu();
+            ContextMenu menu = new ContextMenu();
             MenuItem itemOpen = new MenuItem();
             itemOpen.Name = "MenuItem_DB_Open_" + nodeInfo.ConfigId + "_" + nodeInfo.DbIndex;
             itemOpen.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.OPEN };
@@ -288,7 +291,7 @@ namespace DeskRedis
         /// <returns></returns>
         private ContextMenu CreateKeyFolderContextMenu(NodeInfo nodeInfo)
         {
-            System.Windows.Controls.ContextMenu menu = new ContextMenu();
+            ContextMenu menu = new ContextMenu();
             MenuItem itemOpen = new MenuItem();
             itemOpen.Name = "MenuItem_Key_Folder_Delete_" + nodeInfo.ConfigId;
             itemOpen.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.DELETE };
@@ -306,7 +309,7 @@ namespace DeskRedis
         /// <returns></returns>
         private ContextMenu CreateKeyContextMenu(NodeInfo nodeInfo)
         {
-            System.Windows.Controls.ContextMenu menu = new ContextMenu();
+            ContextMenu menu = new ContextMenu();
             MenuItem itemOpen = new MenuItem();
             itemOpen.Name = "MenuItem_Key_Delete_" + nodeInfo.ConfigId;
             itemOpen.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.DELETE };
@@ -315,6 +318,33 @@ namespace DeskRedis
             menu.Items.Add(itemOpen);
 
             return menu;
+        }
+
+        /// <summary>
+        /// 打开数据库节点。
+        /// </summary>
+        /// <param name="nodeInfo"></param>
+        /// <param name="item">子节点</param>
+        private void OpenDB(NodeInfo nodeInfo, TreeViewItemWithOperator item)
+        {
+            Task.Run(() =>
+            {
+                this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Visible; });
+                this.SetLog(this.tbLog, $"正在打开 {nodeInfo.Header} 数据库...");
+                List<string> keys = GlobalBusiness.RedisCaches[nodeInfo.ConfigId].GetAllKeys(nodeInfo.DbIndex);
+                if (keys == null || keys.Count <= 0)
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        this.gridLoading.Visibility = Visibility.Collapsed;
+                        MessageBox.Show("该库没有任何数据！");
+                    });
+                    return;
+                }
+                this.Dispatcher.Invoke(() => { this.CreateKeyNode(item, keys); });
+                this.SetLog(this.tbLog, $"完成打开 {nodeInfo.Header} 数据库。");
+                this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Collapsed; });
+            });
         }
 
         /// <summary>
@@ -378,7 +408,7 @@ namespace DeskRedis
             {
                 if (GlobalBusiness.RedisCaches[configId].Remove(key, dbIndex))
                 {
-                    TreeViewItem parent = this.currentSelectedTreeViewItem.Parent as TreeViewItem;
+                    TreeViewItemWithOperator parent = this.currentSelectedTreeViewItem.Parent as TreeViewItemWithOperator;
                     parent.Items.Remove(this.currentSelectedTreeViewItem);
 
                     this.tbKey.Clear();
@@ -420,6 +450,30 @@ namespace DeskRedis
                 }
             });
         }
+
+        /// <summary>
+        /// 刷新数据库列表
+        /// </summary>
+        private void RefreshRoot()
+        {
+            this.currentSelectedTreeViewItem.Items.Clear();
+            this.CreateDBNode(this.currentSelectedTreeViewItem);
+            this.currentSelectedTreeViewItem.IsExpanded = true;
+        }
+
+        /// <summary>
+        /// 清空数据库。
+        /// </summary>
+        /// <param name="nodeInfo"></param>
+        private void FlushDB(NodeInfo nodeInfo)
+        {
+            Task.Run(() =>
+            {
+                this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Visible; });
+                GlobalBusiness.RedisCaches[nodeInfo.ConfigId].FlushDb(nodeInfo.DbIndex);
+                this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Collapsed; });
+            });
+        }
         #endregion
 
 
@@ -438,7 +492,7 @@ namespace DeskRedis
             else if (crudType == ConfigOperationType.EDIT)
             {
                 this.currentSelectedTreeViewItem.Items.Clear();
-                this.currentSelectedTreeViewItem.Tag = new NodeInfo() { ConfigId = config.Id, Header = config.Name };
+                this.currentSelectedTreeViewItem.NodeInfo = new NodeInfo() { ConfigId = config.Id, Header = config.Name };
                 this.currentSelectedTreeViewItem.Header = config.Name;
             }
         }
@@ -450,7 +504,7 @@ namespace DeskRedis
         private void WinRenameKey_OnUpdatedKey(string newKey)
         {
             this.currentSelectedTreeViewItem.Header = newKey;
-            NodeInfo nodeInfo = this.currentSelectedTreeViewItem.Tag as NodeInfo;
+            NodeInfo nodeInfo = this.currentSelectedTreeViewItem.NodeInfo;
             nodeInfo.Header = newKey;
             nodeInfo.Key = newKey;
         }
@@ -505,7 +559,7 @@ namespace DeskRedis
         /// <param name="e"></param>
         private void Node_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            this.currentSelectedTreeViewItem = e.Source as TreeViewItem;
+            this.currentSelectedTreeViewItem = e.Source as TreeViewItemWithOperator;
             this.currentSelectedTreeViewItem.IsSelected = true;
         }
 
@@ -533,9 +587,7 @@ namespace DeskRedis
             }
             if (MenuItemType.REFRESH.Equals(nodeInfo.Type))
             {
-                this.currentSelectedTreeViewItem.Items.Clear();
-                this.CreateDBNode(this.currentSelectedTreeViewItem);
-                this.currentSelectedTreeViewItem.IsExpanded = true;
+                this.RefreshRoot();
 
                 return;
             }
@@ -598,7 +650,7 @@ namespace DeskRedis
                     List<string> keys = GlobalBusiness.RedisCaches[nodeInfo.ConfigId].GetAllKeys(nodeInfo.DbIndex);
                     if (keys == null || keys.Count <= 0)
                     {
-                        this.gridLoading.Visibility = Visibility.Collapsed;
+                        this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Collapsed; });
                         MessageBox.Show("该库没有任何数据！");
                         return;
                     }
@@ -632,12 +684,7 @@ namespace DeskRedis
             }
             if (MenuItemType.FLUSH.Equals(nodeInfo.Type))
             {
-                Task.Run(() =>
-                {
-                    this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Visible; });
-                    GlobalBusiness.RedisCaches[nodeInfo.ConfigId].FlushDb(nodeInfo.DbIndex);
-                    this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Collapsed; });
-                });
+                this.FlushDB(nodeInfo);
             }
         }
 
@@ -658,14 +705,13 @@ namespace DeskRedis
                     this.SetLog(this.tbLog, $"正在批量删除 {nodeInfo.Key} 下所有的键...");
                     //删除下级所有的键
                     IList<string> keys = new List<string>();
-                    foreach (TreeViewItem item in this.currentSelectedTreeViewItem.Items)
+                    foreach (TreeViewItemWithOperator item in this.currentSelectedTreeViewItem.Items)
                     {
-                        NodeInfo tmp = item.Tag as NodeInfo;
-                        keys.Add(tmp.Key);
+                        keys.Add(item.NodeInfo.Key);
                     }
 
                     GlobalBusiness.RedisCaches[nodeInfo.ConfigId].RemoveAll(keys, nodeInfo.DbIndex);
-                    TreeViewItem parent = this.currentSelectedTreeViewItem.Parent as TreeViewItem;
+                    TreeViewItemWithOperator parent = this.currentSelectedTreeViewItem.Parent as TreeViewItemWithOperator;
                     parent.Items.Remove(this.currentSelectedTreeViewItem);
                 }
             }
@@ -701,7 +747,7 @@ namespace DeskRedis
         {
             try
             {
-                TreeViewItem item = sender as TreeViewItem;
+                TreeViewItemWithOperator item = sender as TreeViewItemWithOperator;
                 if (item.HasItems)
                 {
                     return;
@@ -721,31 +767,13 @@ namespace DeskRedis
         /// <param name="e"></param>
         private void DB_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            TreeViewItem item = sender as TreeViewItem;
+            TreeViewItemWithOperator item = sender as TreeViewItemWithOperator;
             if (item.HasItems)
             {
                 return;
             }
 
-            NodeInfo nodeInfo = item.Tag as NodeInfo;
-            Task.Run(() =>
-            {
-                this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Visible; });
-                this.SetLog(this.tbLog, $"正在打开 {nodeInfo.Header} 数据库...");
-                List<string> keys = GlobalBusiness.RedisCaches[nodeInfo.ConfigId].GetAllKeys(nodeInfo.DbIndex);
-                if (keys == null || keys.Count <= 0)
-                {
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        this.gridLoading.Visibility = Visibility.Collapsed;
-                        MessageBox.Show("该库没有任何数据！");
-                    });
-                    return;
-                }
-                this.Dispatcher.Invoke(() => { this.CreateKeyNode(item, keys); });
-                this.SetLog(this.tbLog, $"完成打开 {nodeInfo.Header} 数据库。");
-                this.Dispatcher.Invoke(() => { this.gridLoading.Visibility = Visibility.Collapsed; });
-            });
+            this.OpenDB(item.NodeInfo ,item);
         }
 
         /// <summary>
@@ -755,8 +783,8 @@ namespace DeskRedis
         /// <param name="e"></param>
         private void KeyItem_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            TreeViewItem item = sender as TreeViewItem;
-            NodeInfo nodeInfo = item.Tag as NodeInfo;
+            TreeViewItemWithOperator item = sender as TreeViewItemWithOperator;
+            NodeInfo nodeInfo = item.NodeInfo;
 
             if (nodeInfo == null)
             {
@@ -768,6 +796,42 @@ namespace DeskRedis
             }
 
             this.ReadValue(nodeInfo);
+        }
+
+
+        /// <summary>
+        /// 当鼠标点击菜单项的清空按钮时发生。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TreeViewItem_Clear(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// 当鼠标点击菜单项的刷新按钮时发生。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TreeViewItem_Refresh(object sender, RoutedEventArgs e)
+        {
+            NodeInfo nodeInfo = e.Source as NodeInfo;
+            switch (nodeInfo.NodeType)
+            {
+                case NodeType.Connection:
+                    this.RefreshRoot();
+                    break;
+                case NodeType.DataBase:
+                    this.FlushDB(nodeInfo);
+                    break;
+                case NodeType.Key:
+                    break;
+                case NodeType.Folder:
+                    break;
+                default:
+                    break;
+            }
         }
 
         /// <summary>
@@ -805,7 +869,7 @@ namespace DeskRedis
                 return;
             }
 
-            NodeInfo nodeInfo = this.currentSelectedTreeViewItem.Tag as NodeInfo;
+            NodeInfo nodeInfo = this.currentSelectedTreeViewItem.NodeInfo;
             WinRenameKey winRenameKey = new WinRenameKey(nodeInfo.ConfigId, nodeInfo.DbIndex, nodeInfo.Key);
             winRenameKey.OnUpdatedKey += WinRenameKey_OnUpdatedKey;
             winRenameKey.ShowDialog();
@@ -819,7 +883,7 @@ namespace DeskRedis
         /// <param name="e"></param>
         private void BtnDeleteKey_Click(object sender, RoutedEventArgs e)
         {
-            NodeInfo nodeInfo = this.currentSelectedTreeViewItem.Tag as NodeInfo;
+            NodeInfo nodeInfo = this.currentSelectedTreeViewItem.NodeInfo;
             this.DeleteKey(nodeInfo.ConfigId, nodeInfo.DbIndex, nodeInfo.Key);
         }
 
@@ -830,7 +894,7 @@ namespace DeskRedis
         /// <param name="e"></param>
         private void BtnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            NodeInfo nodeInfo = this.currentSelectedTreeViewItem.Tag as NodeInfo;
+            NodeInfo nodeInfo = this.currentSelectedTreeViewItem.NodeInfo;
             this.ReadValue(nodeInfo);
         }
         #endregion

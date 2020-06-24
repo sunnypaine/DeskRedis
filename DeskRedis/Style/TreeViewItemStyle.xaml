@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:converter="clr-namespace:DeskRedis.Converter">
-    
+                    xmlns:converter="clr-namespace:DeskRedis.Converter"
+                    xmlns:cc="clr-namespace:DeskRedis.Control.CustomControl">
+
     <!-- 可视化树折叠展开的按钮样式 -->
     <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
         <Setter Property="Focusable" Value="False"/>
@@ -73,7 +74,7 @@
     <converter:TreeViewLastItemConverter x:Key="LineConverter"/>
     <converter:TreeViewItemIconConverter x:Key="NodeTypeConverter"/>
     <!-- （通用）可视化树孩子样式 -->
-    <Style TargetType="{x:Type TreeViewItem}">
+    <Style TargetType="{x:Type cc:TreeViewItemWithOperator}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"></Setter>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -85,17 +86,19 @@
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                <ControlTemplate TargetType="{x:Type cc:TreeViewItemWithOperator}">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition MinWidth="19" Width="Auto"/>
                             <!--展开折叠按钮以及连接线-->
-                            <ColumnDefinition MinWidth="20" Width="Auto"/>
+                            <ColumnDefinition MinWidth="19" Width="Auto"/>
                             <!--键或文件夹图标-->
                             <ColumnDefinition MinWidth="20" Width="Auto"/>
                             <!--节点内容-->
-                            <ColumnDefinition />
+                            <ColumnDefinition MinWidth="20" Width="*"/>
+                            <!--刷新按钮-->
+                            <ColumnDefinition MinWidth="20" Width="Auto"/>
                             <!--用于当节点展开的时候，不破坏样式-->
+                            <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" MinHeight="20"/>
@@ -147,21 +150,56 @@
                                 BorderThickness="{TemplateBinding BorderThickness}" 
                                 Background="{TemplateBinding Background}" 
                                 CornerRadius="1"
-                                HorizontalAlignment="Left"
                                 Grid.Row="0"
                                 Grid.Column="2"
+                                Grid.ColumnSpan="3"
                                 Margin="1"
                                 Padding="{TemplateBinding Padding}" 
                                 SnapsToDevicePixels="true">
                             <ContentPresenter x:Name="PART_Header" 
                                               ContentSource="Header" 
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              HorizontalAlignment="Left"
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                         </Border>
+                        <!--操作按钮-->
+                        <StackPanel x:Name="operation"
+                                    Visibility="Collapsed"
+                                    Grid.ColumnSpan="5"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center">
+                            <cc:ImageButton x:Name="btnRefresh"
+                                            Width="22"
+                                            Height="22"
+                                            ImageHeight="18"
+                                            ImageWidht="18"
+                                            Foreground="#FFFFFF"
+                                            Background="#6495ED"
+                                            MouseHoverColor="#CCB9D3EE"
+                                            MouseClickColor="#B9D3EE"
+                                            CornerRadius="0"
+                                            Margin="0 0 10 0"
+                                            ToolTip="刷新"
+                                            PathData="{StaticResource ResourceKey=Refresh}"/>
+                            <cc:ImageButton x:Name="btnClear"
+                                            Width="22"
+                                            Height="22"
+                                            ImageHeight="18"
+                                            ImageWidht="18"
+                                            Foreground="#FFFFFF"
+                                            Background="#6495ED"
+                                            MouseHoverColor="#CCB9D3EE"
+                                            MouseClickColor="#B9D3EE"
+                                            CornerRadius="0"
+                                            Margin="0 0 10 0"
+                                            ToolTip="清空"
+                                            PathData="{StaticResource ResourceKey=Clear}"/>
+                        </StackPanel>
+                        
                         <!--子节点-->
                         <ItemsPresenter x:Name="ItemsHost" 
-                                        Grid.ColumnSpan="3" 
+                                        Grid.ColumnSpan="4" 
                                         Grid.Column="1" 
                                         Grid.Row="1" />
                     </Grid>
@@ -173,8 +211,9 @@
                             <Setter Property="Visibility" TargetName="Expander" Value="Hidden"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
-                            <Setter Property="Background" TargetName="Bd" Value="#FF025BC7"/>
+                            <Setter Property="Background" TargetName="Bd" Value="#6666CC"/>
                             <Setter Property="Foreground" Value="#FFFFFFFF"/>
+                            <Setter TargetName="operation" Property="Visibility" Value="Visible"/>
                         </Trigger>
                         <!--被选中后失去焦点-->
                         <MultiTrigger>
@@ -214,5 +253,5 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    
+
 </ResourceDictionary>

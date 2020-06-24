@@ -31,7 +31,7 @@ namespace DeskRedis.Model
         public int DbIndex { get; set; }
 
         /// <summary>
-        /// 选项类型
+        /// 菜单选项类型
         /// </summary>
         public MenuItemType Type { get; set; }
 
