@@ -1,8 +1,7 @@
 ﻿using DeskRedis.Comm.Factory;
-using DeskRedis.Model;
+using DeskRedis.Control.CustomControl;
 using System;
 using System.Globalization;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -15,30 +14,25 @@ namespace DeskRedis.Converter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            TreeViewItem item = (TreeViewItem)value;
-            if (item.Tag == null)
-            {
-                return new GeometryGroup();
-            }
-            NodeInfo info = item.Tag as NodeInfo;
-            if (info == null)
+            TreeViewItemWithOperator item = (TreeViewItemWithOperator)value;
+            if (item.NodeInfo == null)
             {
                 return new GeometryGroup();
             }
 
-            if (info.NodeType == Enums.NodeType.Connection)
+            if (item.NodeInfo.NodeType == Enums.NodeType.Connection)
             {
                 return PathFactory.CreateConnection(PathFactory.Connection);
             }
-            else if (info.NodeType == Enums.NodeType.DataBase)
+            else if (item.NodeInfo.NodeType == Enums.NodeType.DataBase)
             {
                 return PathFactory.CreateConnection(PathFactory.DataBase);
             }
-            else if (info.NodeType == Enums.NodeType.Key)
+            else if (item.NodeInfo.NodeType == Enums.NodeType.Key)
             {
                 return PathFactory.CreateConnection(PathFactory.Key);
             }
-            else if (info.NodeType == Enums.NodeType.Folder)
+            else if (item.NodeInfo.NodeType == Enums.NodeType.Folder)
             {
                 return PathFactory.CreateConnection(PathFactory.Folder);
             }
