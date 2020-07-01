@@ -2,6 +2,7 @@
 using DeskRedis.Enums;
 using DeskRedis.Model;
 using DeskRedis.Model.Configs;
+using DeskRedis.Util;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -71,8 +72,7 @@ namespace DeskRedis
             root.NodeInfo = nodeInfo;
             root.Margin = new Thickness(0, 2, 0, 2);
             root.FontWeight = FontWeights.Bold;
-            root.ClearVisibility = false;
-            root.DeleteVisibility = false;
+            root.UseOperation(new OperateType[] { OperateType.REFRESH, OperateType.DELETE });
             root.MouseUp += Node_MouseUp;
             root.MouseDoubleClick += Root_MouseDoubleClick;
             root.OnClear += TreeViewItem_Clear;
@@ -109,12 +109,13 @@ namespace DeskRedis
                             item.NodeInfo = info;
                             item.Margin = new Thickness(0, 2, 0, 2);
                             item.FontWeight = FontWeights.Normal;
-                            item.DeleteVisibility = false;
+                            item.UseOperation(new OperateType[] { OperateType.ADD, OperateType.REFRESH, OperateType.FLUSH });
                             item.Foreground = new SolidColorBrush(Colors.DarkBlue);
                             item.ContextMenu = this.CreateDBContextMenu(info);
                             item.MouseDoubleClick += DB_MouseDoubleClick;
                             item.OnClear += TreeViewItem_Clear;
                             item.OnRefresh += TreeViewItem_Refresh;
+                            item.OnAddKeyValue += Item_OnAddKeyValue;
                             parent.Items.Add(item);
                         });
                     }
@@ -148,7 +149,7 @@ namespace DeskRedis
                     keyItem.NodeInfo = keyNodeInfo;
                     keyItem.Margin = new Thickness(0, 2, 0, 2);
                     keyItem.FontWeight = FontWeights.Normal;
-                    keyItem.ClearVisibility = false;
+                    keyItem.UseOperation(new OperateType[] { OperateType.DELETE, OperateType.REFRESH });
                     keyItem.ContextMenu = this.CreateKeyContextMenu(keyNodeInfo);
                     keyItem.MouseLeftButtonUp += KeyItem_MouseLeftButtonUp;
                     keyItem.OnDelete += TreeViewItem_Delete;
@@ -165,7 +166,7 @@ namespace DeskRedis
                     item.ContextMenu?.Items.Clear();
                     item.FontWeight = FontWeights.Normal;
                     item.Foreground = new SolidColorBrush(Colors.Orange);
-                    item.DeleteVisibility = false;
+                    item.UseOperation(new OperateType[] { OperateType.FLUSH, OperateType.REFRESH });
                     item.OnRefresh += TreeViewItem_Refresh;
                     item.OnClear += TreeViewItem_Clear;
                     item.ContextMenu = this.CreateKeyFolderContextMenu(itemNodeInfo);
@@ -180,7 +181,7 @@ namespace DeskRedis
                             keyItem.NodeInfo = keyNodeInfo;
                             keyItem.Margin = new Thickness(0, 2, 0, 2);
                             keyItem.FontWeight = FontWeights.Normal;
-                            keyItem.ClearVisibility = false;
+                            keyItem.UseOperation(new OperateType[] { OperateType.DELETE, OperateType.REFRESH });
                             keyItem.ContextMenu = this.CreateKeyContextMenu(keyNodeInfo);
                             keyItem.MouseLeftButtonUp += KeyItem_MouseLeftButtonUp;
                             keyItem.OnRefresh += TreeViewItem_Refresh;
@@ -203,14 +204,14 @@ namespace DeskRedis
             ContextMenu menu = new ContextMenu();
             MenuItem itemOpen = new MenuItem();
             itemOpen.Name = "MenuItem_Root_Open_" + nodeInfo.ConfigId;
-            itemOpen.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.OPEN };
+            itemOpen.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = OperateType.OPEN };
             itemOpen.Header = "打开";
             itemOpen.Click += MenuItem_Root_Click;
             menu.Items.Add(itemOpen);
 
             MenuItem itemRefresh = new MenuItem();
             itemRefresh.Name = "MenuItem_Root_Refresh_" + nodeInfo.ConfigId;
-            itemRefresh.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.REFRESH };
+            itemRefresh.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = OperateType.REFRESH };
             itemRefresh.Header = "刷新";
             itemRefresh.Click += MenuItem_Root_Click;
             menu.Items.Add(itemRefresh);
@@ -220,14 +221,14 @@ namespace DeskRedis
 
             MenuItem itemEdit = new MenuItem();
             itemEdit.Name = "MenuItem_Root_Edit_" + nodeInfo.ConfigId;
-            itemEdit.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.EDIT };
+            itemEdit.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = OperateType.EDIT };
             itemEdit.Header = "编辑";
             itemEdit.Click += MenuItem_Root_Click;
             menu.Items.Add(itemEdit);
 
             MenuItem itemDelete = new MenuItem();
             itemDelete.Name = "MenuItem_Root_Delete_" + nodeInfo.ConfigId;
-            itemDelete.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.DELETE };
+            itemDelete.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = OperateType.DELETE };
             itemDelete.Header = "删除";
             itemDelete.Click += MenuItem_Root_Click;
             menu.Items.Add(itemDelete);
@@ -237,7 +238,7 @@ namespace DeskRedis
 
             MenuItem itemClose = new MenuItem();
             itemClose.Name = "MenuItem_Root_Close_" + nodeInfo.ConfigId;
-            itemClose.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.CLOSE };
+            itemClose.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = OperateType.CLOSE };
             itemClose.Header = "关闭";
             itemClose.Click += MenuItem_Root_Click;
             menu.Items.Add(itemClose);
@@ -255,21 +256,21 @@ namespace DeskRedis
             ContextMenu menu = new ContextMenu();
             MenuItem itemOpen = new MenuItem();
             itemOpen.Name = "MenuItem_DB_Open_" + nodeInfo.ConfigId + "_" + nodeInfo.DbIndex;
-            itemOpen.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.OPEN };
+            itemOpen.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = OperateType.OPEN };
             itemOpen.Header = "打开";
             itemOpen.Click += MenuItem_DB_Click;
             menu.Items.Add(itemOpen);
 
             MenuItem itemRefresh = new MenuItem();
             itemRefresh.Name = "MenuItem_DB_Refresh_" + nodeInfo.ConfigId + "_" + nodeInfo.DbIndex;
-            itemRefresh.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.REFRESH };
+            itemRefresh.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = OperateType.REFRESH };
             itemRefresh.Header = "刷新";
             itemRefresh.Click += MenuItem_DB_Click;
             menu.Items.Add(itemRefresh);
 
             MenuItem itemSearch = new MenuItem();
             itemSearch.Name = "MenuItem_DB_Search_" + nodeInfo.ConfigId + "_" + nodeInfo.DbIndex;
-            itemSearch.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.SEARCH };
+            itemSearch.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = OperateType.SEARCH };
             itemSearch.Header = "搜索";
             itemSearch.Click += MenuItem_DB_Click;
             menu.Items.Add(itemSearch);
@@ -279,7 +280,7 @@ namespace DeskRedis
 
             MenuItem itemClose = new MenuItem();
             itemClose.Name = "MenuItem_DB_Close_" + nodeInfo.ConfigId + "_" + nodeInfo.DbIndex;
-            itemClose.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.CLOSE };
+            itemClose.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = OperateType.CLOSE };
             itemClose.Header = "关闭";
             itemClose.Click += MenuItem_DB_Click;
             menu.Items.Add(itemClose);
@@ -289,7 +290,7 @@ namespace DeskRedis
 
             MenuItem itemDelete = new MenuItem();
             itemDelete.Name = "MenuItem_DB_Flush_" + nodeInfo.ConfigId + "_" + nodeInfo.DbIndex;
-            itemDelete.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.FLUSH };
+            itemDelete.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = OperateType.FLUSH };
             itemDelete.Header = "清空";
             itemDelete.Click += MenuItem_DB_Click;
             menu.Items.Add(itemDelete);
@@ -307,7 +308,7 @@ namespace DeskRedis
             ContextMenu menu = new ContextMenu();
             MenuItem itemOpen = new MenuItem();
             itemOpen.Name = "MenuItem_Key_Folder_Delete_" + nodeInfo.ConfigId;
-            itemOpen.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.DELETE };
+            itemOpen.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = OperateType.DELETE };
             itemOpen.Header = "删除";
             itemOpen.Click += MenuItem_KeyFolder_Click;
             menu.Items.Add(itemOpen);
@@ -325,7 +326,7 @@ namespace DeskRedis
             ContextMenu menu = new ContextMenu();
             MenuItem itemOpen = new MenuItem();
             itemOpen.Name = "MenuItem_Key_Delete_" + nodeInfo.ConfigId;
-            itemOpen.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = MenuItemType.DELETE };
+            itemOpen.Tag = new NodeInfo() { ConfigId = nodeInfo.ConfigId, DbIndex = nodeInfo.DbIndex, Header = nodeInfo.Header, Key = nodeInfo.Key, Type = OperateType.DELETE };
             itemOpen.Header = "删除";
             itemOpen.Click += MenuItem_Key_Click;
             menu.Items.Add(itemOpen);
@@ -648,7 +649,7 @@ namespace DeskRedis
             NodeInfo nodeInfo = item.Tag as NodeInfo;
             ConnectionConfig config = GlobalBusiness.DictConnectionConfig[nodeInfo.ConfigId];
 
-            if (MenuItemType.OPEN.Equals(nodeInfo.Type))
+            if (OperateType.OPEN.Equals(nodeInfo.Type))
             {
                 if (this.currentSelectedTreeViewItem.HasItems)
                 {
@@ -659,13 +660,13 @@ namespace DeskRedis
 
                 return;
             }
-            if (MenuItemType.REFRESH.Equals(nodeInfo.Type))
+            if (OperateType.REFRESH.Equals(nodeInfo.Type))
             {
                 this.RefreshRoot();
 
                 return;
             }
-            if (MenuItemType.EDIT.Equals(nodeInfo.Type))
+            if (OperateType.EDIT.Equals(nodeInfo.Type))
             {
                 if (this.currentSelectedTreeViewItem.HasItems
                     && MessageBox.Show("该操作将关闭连接！是否继续？", "操作提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
@@ -680,7 +681,7 @@ namespace DeskRedis
 
                 return;
             }
-            if (MenuItemType.DELETE.Equals(nodeInfo.Type))
+            if (OperateType.DELETE.Equals(nodeInfo.Type))
             {
                 if (MessageBox.Show($"确定删除{config.Name}连接配置吗？", "删除提示",
                     MessageBoxButton.OKCancel) == MessageBoxResult.OK)
@@ -692,7 +693,7 @@ namespace DeskRedis
 
                 return;
             }
-            if (MenuItemType.CLOSE.Equals(nodeInfo.Type))
+            if (OperateType.CLOSE.Equals(nodeInfo.Type))
             {
                 this.currentSelectedTreeViewItem.Items.Clear();
                 this.currentSelectedTreeViewItem.IsExpanded = false;
@@ -711,7 +712,7 @@ namespace DeskRedis
             MenuItem item = sender as MenuItem;
             NodeInfo nodeInfo = item.Tag as NodeInfo;
 
-            if (MenuItemType.OPEN.Equals(nodeInfo.Type))
+            if (OperateType.OPEN.Equals(nodeInfo.Type))
             {
                 if (this.currentSelectedTreeViewItem.HasItems)
                 {
@@ -720,22 +721,22 @@ namespace DeskRedis
 
                 this.RefreshDB(nodeInfo);
             }
-            if (MenuItemType.REFRESH.Equals(nodeInfo.Type))
+            if (OperateType.REFRESH.Equals(nodeInfo.Type))
             {
                 this.RefreshKey(nodeInfo);
             }
-            if (MenuItemType.SEARCH.Equals(nodeInfo.Type))
+            if (OperateType.SEARCH.Equals(nodeInfo.Type))
             {
                 WinSearchKey winSearchKey = new WinSearchKey(nodeInfo.ConfigId, nodeInfo.DbIndex);
                 winSearchKey.OnError += this.Win_OnError;
                 winSearchKey.ShowDialog();
                 winSearchKey.OnError -= this.Win_OnError;
             }
-            if (MenuItemType.CLOSE.Equals(nodeInfo.Type))
+            if (OperateType.CLOSE.Equals(nodeInfo.Type))
             {
 
             }
-            if (MenuItemType.FLUSH.Equals(nodeInfo.Type))
+            if (OperateType.FLUSH.Equals(nodeInfo.Type))
             {
                 this.FlushDB(nodeInfo);
             }
@@ -861,7 +862,7 @@ namespace DeskRedis
         }
 
         /// <summary>
-        /// 当鼠标点击菜单项的删除按钮时发生。
+        /// 当鼠标点击附加功能的删除按钮时发生。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -872,7 +873,23 @@ namespace DeskRedis
         }
 
         /// <summary>
-        /// 当鼠标点击菜单项的刷新按钮时发生。
+        /// 当鼠标点击附加功能的添加按钮时发生。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Item_OnAddKeyValue(object sender, RoutedEventArgs e)
+        {
+            NodeInfo nodeInfo = e.Source as NodeInfo;
+            WinAddKey winAddKey = new WinAddKey(nodeInfo);
+            winAddKey.OnAdded += (_key) =>
+            {
+                this.CreateKeyNode(this.currentSelectedTreeViewItem, new List<string>() { _key });
+            };
+            winAddKey.ShowDialog();
+        }
+
+        /// <summary>
+        /// 当鼠标点击附加功能的刷新按钮时发生。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

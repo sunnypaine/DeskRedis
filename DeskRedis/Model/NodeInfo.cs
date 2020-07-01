@@ -33,7 +33,7 @@ namespace DeskRedis.Model
         /// <summary>
         /// 菜单选项类型
         /// </summary>
-        public MenuItemType Type { get; set; }
+        public OperateType Type { get; set; }
 
         /// <summary>
         /// 节点类型

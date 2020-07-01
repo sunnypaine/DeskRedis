@@ -60,6 +60,7 @@ namespace DeskRedis.Util.Redis
         /// <summary>
         /// 获取所有键
         /// </summary>
+        /// <param name="index">指代数据库的索引。</param>
         /// <returns></returns>
         public List<string> GetAllKeys(int index = 0)
         {
@@ -75,6 +76,7 @@ namespace DeskRedis.Util.Redis
         /// <summary>
         /// 当前数据库的 key 的数量。
         /// </summary>
+        /// <param name="index">指代数据库的索引。</param>
         /// <returns></returns>
         public long GetKeyCount(int index = 0)
         {
@@ -92,6 +94,7 @@ namespace DeskRedis.Util.Redis
         /// </summary>
         /// <param name="oldKey"></param>
         /// <param name="newKey"></param>
+        /// <param name="index">指代数据库的索引。</param>
         public void RenameKey(string oldKey, string newKey, int index = 0)
         {
             using (IRedisClient client = base.pooledRedisClientManager.GetClient())
@@ -132,6 +135,7 @@ namespace DeskRedis.Util.Redis
         /// <param name="key">键。</param>
         /// <param name="value">值。</param>
         /// <param name="expiresIn">数据的生命周期。</param>
+        /// <param name="index">指代数据库的索引。</param>
         /// <returns></returns>
         public bool Add<T>(string key, T value, TimeSpan expiresIn, int index = 0)
         {
@@ -151,6 +155,7 @@ namespace DeskRedis.Util.Redis
         /// <param name="key">键。</param>
         /// <param name="value">值。</param>
         /// <param name="expiresAt">数据的生命周期。</param>
+        /// <param name="index">指代数据库的索引。</param>
         /// <returns></returns>
         public bool Add<T>(string key, T value, DateTime expiresAt, int index = 0)
         {
@@ -169,6 +174,7 @@ namespace DeskRedis.Util.Redis
         /// <typeparam name="T">添加的值的数据类型。</typeparam>
         /// <param name="key">键。</param>
         /// <param name="value">值。</param> 
+        /// <param name="index">指代数据库的索引。</param>
         /// <returns></returns>
         public bool Add<T>(string key, T value, int index = 0)
         {
@@ -180,6 +186,86 @@ namespace DeskRedis.Util.Redis
             }
             return result;
         }
+
+        ///// <summary>
+        ///// 添加一组list数据类型的新项到缓存中。
+        ///// </summary>
+        ///// <param name="key">键</param>
+        ///// <param name="value">值</param>
+        ///// <param name="index">指代数据库的索引。</param>
+        //public void AddList(string key, string value, int index = 0)
+        //{
+        //    using (IRedisClient client = base.pooledRedisClientManager.GetClient())
+        //    {
+        //        client.Db = index;
+        //        client.AddItemToList(key, value);
+        //    }
+        //}
+
+        ///// <summary>
+        ///// 添加一组set数据类型的新项到缓存中。
+        ///// </summary>
+        ///// <param name="key">键</param>
+        ///// <param name="value">值</param>
+        ///// <param name="index">指代数据库的索引。</param>
+        //public void AddSet(string key, string value, int index = 0)
+        //{
+        //    using (IRedisClient client = base.pooledRedisClientManager.GetClient())
+        //    {
+        //        client.Db = index;
+        //        client.AddItemToSet(key, value);
+        //    }
+        //}
+
+        ///// <summary>
+        ///// 添加一组zset数据类型的新项到缓存中
+        ///// </summary>
+        ///// <param name="key">键</param>
+        ///// <param name="value">值</param>
+        ///// <param name="index">指代数据库的索引。</param>
+        //public void AddSortedSet(string key, string value, int index = 0)
+        //{
+        //    using (IRedisClient client = base.pooledRedisClientManager.GetClient())
+        //    {
+        //        client.Db = index;
+        //        client.AddItemToSortedSet(key, value);
+        //    }
+        //}
+
+        ///// <summary>
+        ///// 添加一组zset数据类型的新项到缓存中
+        ///// </summary>
+        ///// <param name="key">键</param>
+        ///// <param name="value">值</param>
+        ///// <param name="score"></param>
+        ///// <param name="index">指代数据库的索引。</param>
+        //public void AddSortedSet(string key, string value, double score, int index = 0)
+        //{
+        //    using (IRedisClient client = base.pooledRedisClientManager.GetClient())
+        //    {
+        //        client.Db = index;
+        //        client.AddItemToSortedSet(key, value, score);
+        //    }
+        //}
+
+        ///// <summary>
+        ///// 添加一组hash数据类型的新项到缓存中。
+        ///// </summary>
+        ///// <param name="hashId">hash的id</param>
+        ///// <param name="key">键。</param>
+        ///// <param name="value">值。</param>
+        ///// <param name="index">指代数据库的索引。</param>
+        ///// <returns></returns>
+        //public bool AddHash(string hashId, string key, string value, int index = 0)
+        //{
+        //    bool result;
+        //    using (IRedisClient client = base.pooledRedisClientManager.GetClient())
+        //    {
+        //        client.Db = index;
+        //        result = client.SetEntryInHash(hashId, key, value);
+        //    }
+        //    return result;
+        //}
 
         /// <summary>
         /// 按给定的数值递增指定键的值。操作是原子的, 并在服务器上发生。 一个不存在的键值从0开始。

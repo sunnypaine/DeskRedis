@@ -6,6 +6,7 @@
                  xmlns:local="clr-namespace:DeskRedis"
                  xmlns:cc="clr-namespace:DeskRedis.Control.CustomControl"
                  mc:Ignorable="d"
+                 WindowStartupLocation="CenterScreen"
                  Title="搜索键" Height="500" Width="400" Background="#FFFFFF" Icon="redis.ico">
     <Grid>
         <Grid.RowDefinitions>

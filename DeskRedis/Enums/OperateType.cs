@@ -3,12 +3,16 @@
     /// <summary>
     /// 邮件菜单操作类型
     /// </summary>
-    public enum MenuItemType
+    public enum OperateType
     {
         /// <summary>
         /// 展开
         /// </summary>
         OPEN,
+        /// <summary>
+        /// 新增键值
+        /// </summary>
+        ADD,
         /// <summary>
         /// 删除
         /// </summary>

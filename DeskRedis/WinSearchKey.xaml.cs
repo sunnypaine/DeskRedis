@@ -46,7 +46,6 @@ namespace DeskRedis
         public WinSearchKey()
         {
             InitializeComponent();
-            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             this.IsShowHelp = false;
         }
 

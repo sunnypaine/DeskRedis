@@ -13,6 +13,7 @@
                 <ResourceDictionary Source="Style/ScrollStyle.xaml"/>
                 <ResourceDictionary Source="Style/TreeViewItemStyle.xaml"/>
                 <ResourceDictionary Source="Style/WindowStyle.xaml"/>
+                <ResourceDictionary Source="Style/ComboBoxStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

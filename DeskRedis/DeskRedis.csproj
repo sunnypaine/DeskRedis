@@ -123,7 +123,7 @@
     <Compile Include="Converter\TreeViewItemIconConverter.cs" />
     <Compile Include="Converter\TreeViewLastItemConverter.cs" />
     <Compile Include="Enums\ConfigOperationType.cs" />
-    <Compile Include="Enums\MenuItemType.cs" />
+    <Compile Include="Enums\OperateType.cs" />
     <Compile Include="Enums\NodeType.cs" />
     <Compile Include="Exceptions\DuplicateMemberException.cs" />
     <Compile Include="Exceptions\IllegalFormDataException.cs" />
@@ -138,8 +138,12 @@
     <Compile Include="Util\Redis\AbstractRedisPoolManger.cs" />
     <Compile Include="Util\Redis\IRedisCache.cs" />
     <Compile Include="Util\Redis\RedisCache.cs" />
+    <Compile Include="Util\TreeViewItemExtension.cs" />
     <Compile Include="WinAddConnection.xaml.cs">
       <DependentUpon>WinAddConnection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WinAddKey.xaml.cs">
+      <DependentUpon>WinAddKey.xaml</DependentUpon>
     </Compile>
     <Compile Include="WinRenameKey.xaml.cs">
       <DependentUpon>WinRenameKey.xaml</DependentUpon>
@@ -152,6 +156,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Style\BaseStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Style\ComboBoxStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -196,6 +204,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WinAddKey.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
